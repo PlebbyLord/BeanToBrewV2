@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Bean to Brew</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -20,8 +20,9 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                <img src="{{ asset('storage/images/Bean-to-Brew.png') }}" alt="Logo" width="50" height="50">
+                <a class="navbar-brand" href="/home">
+                    Bean to Brew
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -31,17 +32,25 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <div class="navbar-nav">
-                            <a class="nav-link" href="#">Schedule</a>
-                            <a class="nav-link" href="#">Inventory</a>
-                            <a class="nav-link" href="#">Orders</a>
-                          </div>
+                            <a class="nav-link" href="/home">Home</a>
+                        </div>
+                        @auth
+                        @if(Auth::user()->email == 'beantobrew24@gmail.com')
+                            <div class="navbar-nav">
+                                <a class="nav-link" href="{{ route('features.schedule') }}">{{ __('Schedule') }}</a>
+                                <a class="nav-link" href="{{ route('features.inventory') }}">{{ __('Inventory') }}</a>
+                                <a class="nav-link" href="{{ route('features.orders') }}">{{ __('Orders') }}</a>
+                            </div>
+                        @endif
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
                         <div class="navbar-nav">
-                            <a class="nav-link" href="#">Purchase</a>
-                          </div>
+                            <a class="nav-link" href="{{ route('features.mapping') }}">{{ __('Find A Store') }}</a>
+                            <a class="nav-link" href="{{ route('features.purchase') }}">{{ __('Purchase') }}</a>
+                        </div>
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
