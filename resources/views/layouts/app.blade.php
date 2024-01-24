@@ -30,11 +30,18 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                        <div class="navbar-nav">
+                            <a class="nav-link" href="#">Schedule</a>
+                            <a class="nav-link" href="#">Inventory</a>
+                            <a class="nav-link" href="#">Orders</a>
+                          </div>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
+                        <div class="navbar-nav">
+                            <a class="nav-link" href="#">Purchase</a>
+                          </div>
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
