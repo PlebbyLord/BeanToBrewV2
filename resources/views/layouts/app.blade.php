@@ -21,7 +21,7 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <img src="{{ asset('storage/images/Bean-to-Brew.png') }}" alt="Logo" width="50" height="50">
-                <a class="navbar-brand" href="/home">
+                <a class="navbar-brand" href="/">
                     Bean to Brew
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -32,7 +32,7 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <div class="navbar-nav">
-                            <a class="nav-link" href="/home">Home</a>
+                            <a class="nav-link" href="/">Home</a>
                         </div>
                         @auth
                         @if(Auth::user()->email == 'beantobrew24@gmail.com')

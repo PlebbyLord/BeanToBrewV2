@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Schedule extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'coffee_species',
+        'batch_number',
+        'Date_Set',
+        'Harvest_Date',
+        'Schedule_Type',
+    ];
 }
