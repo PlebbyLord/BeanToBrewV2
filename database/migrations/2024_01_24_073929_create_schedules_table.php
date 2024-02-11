@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
+            $table->string('coffee_species');
+            $table->integer('batch_number');
+            $table->date('Date_Set');
+            $table->date('Harvest_Date')->nullable();
+            $table->string('Schedule_Type');
             $table->timestamps();
         });
     }

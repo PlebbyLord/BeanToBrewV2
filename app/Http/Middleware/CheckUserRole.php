@@ -21,6 +21,6 @@ class CheckUserRole
         }
 
         // Redirect to the home page if the user does not meet the criteria
-        return redirect(route('/home'));
+        return redirect(route('home'));
     }
 }
