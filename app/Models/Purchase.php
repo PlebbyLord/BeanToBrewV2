@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Purchase extends Model
 {
@@ -25,4 +26,10 @@ class Purchase extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class, 'purchase_id', 'id');
+    }
 }
+

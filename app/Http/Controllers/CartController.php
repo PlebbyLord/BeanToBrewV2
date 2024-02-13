@@ -76,16 +76,16 @@ class CartController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'item_id' => 'required',
+            'purchase_id' => 'required',
             'quantity' => 'required|numeric|min:1',
         ]);
 
         // Find the selected item using the provided item_id
-        $selectedItem = Purchase::find($request->input('item_id'));
+        $selectedItem = Purchase::find($request->input('purchase_id'));
         
         // Check if the item is already in the user's cart and belongs to the same company
         $existingCartItem = Cart::where('user_id', Auth::id())
-            ->where('item_id', $selectedItem->id)
+            ->where('purchase_id', $selectedItem->id)
             ->orderBy('id', 'desc')
             ->first();
         
@@ -95,7 +95,7 @@ class CartController extends Controller
                 // Create a new Cart instance
                 $cart = new Cart([
                     'user_id' => Auth::id(),
-                    'item_id' => $selectedItem->id,
+                    'purchase_id' => $selectedItem->id,
                     'item_image' => $selectedItem->item_image,
                     'item_name' => $selectedItem->item_name,
                     'item_price' => $selectedItem->item_price,
@@ -113,7 +113,7 @@ class CartController extends Controller
             // If the item is not in the cart, create a new Cart instance
             $cart = new Cart([
                 'user_id' => Auth::id(),
-                'item_id' => $selectedItem->id,
+                'purchase_id' => $selectedItem->id,
                 'item_image' => $selectedItem->item_image,
                 'item_name' => $selectedItem->item_name,
                 'item_price' => $selectedItem->item_price,
