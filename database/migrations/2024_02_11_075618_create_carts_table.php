@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('item_id');
+            $table->unsignedBigInteger('purchase_id');
             $table->string('item_name');
             $table->string('item_image');
             $table->decimal('item_price', 10, 2);
@@ -22,7 +22,10 @@ return new class extends Migration
             $table->date('expiry_date');
             $table->tinyInteger('checkout_status')->default(1);
             $table->tinyInteger('delivery_status')->default(1);
+            $table->tinyInteger('rate_status')->default(1);
             $table->timestamps();
+
+            $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('cascade');
         });
     }
 

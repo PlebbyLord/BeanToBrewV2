@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -38,5 +39,11 @@ class OrdersController extends Controller
                 
         // Redirect back or to a specific page
         return redirect()->back()->with('success', 'Delivery status updated successfully.');
+    }
+
+    public function ratePage($cart_id)
+    {
+        $cart = Cart::findOrFail($cart_id); // Retrieve the cart item using the provided cart_id
+        return view('features.rate', compact('cart'));
     }
 }

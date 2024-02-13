@@ -103,11 +103,16 @@
                                             <form method="POST" action="{{ route('orders.updateDeliveryStatus', ['cartId' => $cart->id]) }}">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 12px; margin-left: 1110px;">Order Received</button>
+                                                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 15px; margin-left: 1080px; width: 130px;">Order Received</button>
                                             </form>
                                             @endif
                                         </div>
                                     </div>
+                                    <div class="col-md-1">
+                                        @if ($cart->delivery_status == 3 && $cart->rate_status == 1)
+                                        <a href="{{ route('features.rate', ['cart_id' => $cart->id]) }}" class="btn btn-primary" style="font-size: 15px; margin-left: 575px; width: 100px;">Rate</a>
+                                        @endif
+                                    </div>                                   
                                     @php
                                     $totalPricesSum += $cart->item_price * $cart->quantity; // Accumulate the item subtotal for each item
                                     if ($cart->orders->first()->shipping_option == 2){

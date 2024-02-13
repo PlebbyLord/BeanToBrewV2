@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 @extends('layouts.app')
 
 @section('content')
@@ -7,7 +9,40 @@
         <div class="col-md-7">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Selected Item Details</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Selected Item Details</h5>
+                            <!-- Display the selected item details -->
+                        </div>
+                        @php
+                        // Calculate the average rating for the specific item
+                        $ratings = App\Models\Rating::where('purchase_id', $selectedItem->id)->pluck('rating')->toArray();
+                        $totalRatings = count($ratings);
+                        $averageRating = $totalRatings > 0 ? array_sum($ratings) / $totalRatings : 0;
+                        
+                        // Determine the integer and fractional parts of the average rating
+                        $integerPart = floor($averageRating);
+                        $fractionalPart = $averageRating - $integerPart;
+                    @endphp
+                    
+                    <div class="col-md-6 d-flex justify-content-end align-items-center">
+                        <!-- Display the "Rating" text and coffee cup icons -->
+                        <h6 class="mr-2">Rating:</h6>
+                        @for ($i = 1; $i <= 5; $i++)
+                            @php
+                                // Determine the glow effect based on the position and fractional part of the average rating
+                                if ($i <= $integerPart) {
+                                    $glowClass = 'text-warning'; // Full glowing cup
+                                } elseif ($i == $integerPart + 1 && $fractionalPart > 0) {
+                                    $glowClass = 'text-warning-half'; // Half-glowing cup
+                                } else {
+                                    $glowClass = ''; // No glow
+                                }
+                            @endphp
+                            <i class="fas fa-coffee fa-1x coffee-icon {{ $glowClass }}"></i>
+                        @endfor
+                    </div>                    
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="card-header d-flex justify-content-end align-items-center" style="font-size: 15px;">
@@ -16,7 +51,7 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <img src="{{ asset('storage/' . $selectedItem->item_image) }}" alt="{{ $selectedItem->item_name }}" class="img-fluid">
-                            </div>
+                            </div>                          
                             <div class="col-md-8">
                                 <!-- Display item details -->
                                 <div class="row mb-3">
@@ -50,7 +85,7 @@
                                             <label for="item_stock" class="col-form-label">{{ __('Item Stock:') }}</label>
                                             {{ $selectedItem->item_stock }}
                                         </div>
-                                        <input type="hidden" name="item_id" value="{{ $selectedItem->id }}">
+                                        <input type="hidden" name="purchase_id" value="{{ $selectedItem->id }}">
                                         <input type="hidden" name="item_image" value="{{ $selectedItem->item_image }}">
                                         <input type="hidden" name="item_name" value="{{ $selectedItem->item_name }}">
                                         <input type="hidden" name="item_stock" value="{{ $selectedItem->item_stock }}">
@@ -93,4 +128,55 @@
         </div>
     </div>
 </div>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Comments</h5>
+                </div>
+                <div class="card-body">
+                    @if ($selectedItem->ratings->isNotEmpty())
+                        @php
+                            // Calculate pagination parameters
+                            $perPage = 5;
+                            $currentPage = request()->input('page', 1);
+                            $items = $selectedItem->ratings->slice(($currentPage - 1) * $perPage, $perPage);
+                        @endphp
+
+                        <div class="row justify-content-center">
+                            @foreach($items as $rating)
+                                <div class="col-md-12">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <!-- Display the user's name -->
+                                            {{ $rating->user->name }}
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Display the comment -->
+                                            {{ $rating->comment }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p>No ratings available for this item.</p>
+                    @endif
+                </div>
+                @if ($selectedItem->ratings->count() > $perPage)
+                    <div class="card-footer">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                {{ $selectedItem->ratings->links() }}
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

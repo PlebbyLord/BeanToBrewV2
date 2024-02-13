@@ -30,6 +30,9 @@ Route::delete('/cart/{cart}', [App\Http\Controllers\CartController::class, 'dest
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout');
 Route::post('/place-order', [App\Http\Controllers\CheckoutController::class, 'placeOrder'])->name('place.order');
 Route::put('/orders/updateDeliveryStatus/{cartId}', [App\Http\Controllers\OrdersController::class, 'updateDeliveryStatus'])->name('orders.updateDeliveryStatus');
+Route::get('/rate/{cart_id}', [App\Http\Controllers\OrdersController::class, 'ratePage'])->name('features.rate');
+Route::post('/rate/save', [App\Http\Controllers\RatingController::class, 'save'])->name('rate.save');
+
 
 Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/schedule', [App\Http\Controllers\ScheduleController::class, 'index'])->name('features.schedule');
