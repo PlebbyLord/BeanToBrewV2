@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
@@ -23,6 +24,7 @@ class InventoryController extends Controller
      */
     public function index()
     {
-        return view('Features.inventory');
+        $purchases = Purchase::all();
+        return view('Features.inventory', compact('purchases'));
     }
 }
