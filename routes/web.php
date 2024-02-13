@@ -20,6 +20,16 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Auth::routes();
 Route::get('/purchase', [App\Http\Controllers\PurchaseController::class, 'index'])->name('features.purchase');
 Route::get('/mapping', [App\Http\Controllers\MappingController::class, 'index'])->name('features.mapping');
+Route::get('/viewitem/{id}', [App\Http\Controllers\ViewItemController::class, 'showItem'])->name('viewitem.showItem');
+Route::get('/viewitem', [App\Http\Controllers\ViewItemController::class, 'showItem'])->name('viewitem.showItem.query');
+Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('features.cart');
+Route::get('/orders', [App\Http\Controllers\OrdersController::class, 'index'])->name('features.orders');
+Route::post('/cart/add', [App\Http\Controllers\CartController::class, 'addToCart'])->name('cart.addToCart');
+Route::post('/cart/updateQuantity', [App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+Route::delete('/cart/{cart}', [App\Http\Controllers\CartController::class, 'destroy'])->name('cart.destroy');
+Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout');
+Route::post('/place-order', [App\Http\Controllers\CheckoutController::class, 'placeOrder'])->name('place.order');
+Route::put('/orders/updateDeliveryStatus/{cartId}', [App\Http\Controllers\OrdersController::class, 'updateDeliveryStatus'])->name('orders.updateDeliveryStatus');
 
 Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/schedule', [App\Http\Controllers\ScheduleController::class, 'index'])->name('features.schedule');
@@ -34,6 +44,10 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/prune', [ScheduleController::class, 'prune'])->name('prune');
     Route::get('/water', [ScheduleController::class, 'water'])->name('water');
     Route::get('/inventory', [App\Http\Controllers\InventoryController::class, 'index'])->name('features.inventory');
-    Route::get('/orders', [App\Http\Controllers\OrdersController::class, 'index'])->name('features.orders');
-    
+    Route::get('/sales', [App\Http\Controllers\SalesController::class, 'index'])->name('features.sales');
+    Route::get('/sales/pending', [App\Http\Controllers\SalesController::class, 'pending'])->name('features.pending');
+    Route::post('/save-item', [App\Http\Controllers\PurchaseController::class, 'saveItem'])->name('save.item');
+    Route::delete('/purchase/{id}', [App\Http\Controllers\PurchaseController::class, 'destroy'])->name('purchase.delete');
+    Route::post('/deliver/{cartId}', [App\Http\Controllers\SalesController::class, 'DeliverSend'])->name('deliver.send');
+
 });

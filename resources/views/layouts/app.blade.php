@@ -39,7 +39,7 @@
                             <div class="navbar-nav">
                                 <a class="nav-link" href="{{ route('features.schedule') }}">{{ __('Schedule') }}</a>
                                 <a class="nav-link" href="{{ route('features.inventory') }}">{{ __('Inventory') }}</a>
-                                <a class="nav-link" href="{{ route('features.orders') }}">{{ __('Orders') }}</a>
+                                <a class="nav-link" href="{{ route('features.sales') }}">{{ __('Sales') }}</a>
                             </div>
                         @endif
                         @endauth
@@ -50,6 +50,12 @@
                         <div class="navbar-nav">
                             <a class="nav-link" href="{{ route('features.mapping') }}">{{ __('Find A Store') }}</a>
                             <a class="nav-link" href="{{ route('features.purchase') }}">{{ __('Purchase') }}</a>
+                            @auth
+                                @if(auth()->user()->email != 'beantobrew24@gmail.com')
+                                    <a class="nav-link" href="{{ route('features.cart') }}">{{ __('Cart') }}</a>
+                                    <a class="nav-link" href="{{ route('features.orders') }}">{{ __('Orders') }}</a>
+                                @endif
+                            @endauth
                         </div>
                         <!-- Authentication Links -->
                         @guest
