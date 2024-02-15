@@ -35,7 +35,6 @@ Route::get('/rate/{cart_id}', [App\Http\Controllers\OrdersController::class, 'ra
 Route::post('/rate/save', [App\Http\Controllers\RatingController::class, 'save'])->name('rate.save');
 Route::get('mapping/getMappingData', [MappingController::class, 'getMappingData'])->name('mapping.getMappingData');
 
-
 Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/schedule', [App\Http\Controllers\ScheduleController::class, 'index'])->name('features.schedule');
     Route::post('/plant-schedule', [App\Http\Controllers\ScheduleController::class, 'PlantingSave'])->name('plant-schedule');

@@ -19,6 +19,7 @@ class Purchase extends Model
         'item_stock',
         'expiry_date',
         'item_description',
+        'coffee_type',
         // Add other fields as needed
     ];
 

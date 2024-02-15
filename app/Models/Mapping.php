@@ -9,6 +9,6 @@ class Mapping extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'latitude', 'longitude'];
+    protected $fillable = ['name', 'latitude', 'longitude','user_id'];
 
 }
