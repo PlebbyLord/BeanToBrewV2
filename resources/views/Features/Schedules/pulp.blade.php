@@ -10,12 +10,12 @@
                     <a href="{{ route('features.schedule') }}" class="btn btn-sm btn-primary btn-lg px-4" style="font-size: 15px;">Back</a>
                 </div>
                 <div class="col-9 text-center">
-                    <h5>Watering Schedule</h5>
+                    <h5>Pulping Schedule</h5>
                 </div>
             </div>
         </div> 
         <div class="card-body">
-            <form method="post" action="{{ route('water-schedule') }}">
+            <form method="post" action="{{ route('pesticide-schedule') }}">
                 @csrf
                 <div class="form-group">
                     <label for="coffeeType">Select Coffee Species:</label>

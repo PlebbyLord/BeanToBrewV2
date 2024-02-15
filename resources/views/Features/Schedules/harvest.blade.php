@@ -72,7 +72,7 @@
         // Implement your linear regression algorithm here
         // For demonstration, let's assume the best year is 5 years after planting
         var plantingYear = selectedDate.year();
-        var bestYear = plantingYear + 4; // Adjust this based on your algorithm
+        var bestYear = plantingYear + 5; // Adjust this based on your algorithm
         return bestYear;
     }
 </script>
