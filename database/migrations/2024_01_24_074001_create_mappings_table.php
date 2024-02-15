@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('mappings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->decimal('latitude', 10, 8); // Adjust precision and scale as needed
             $table->decimal('longitude', 11, 8); // Adjust precision and scale as needed

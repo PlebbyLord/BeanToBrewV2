@@ -137,10 +137,13 @@
                     <h5>Comments</h5>
                 </div>
                 <div class="card-body">
+                    @php
+                    // Initialize $perPage outside of the if block
+                    $perPage = 5;
+                    @endphp
                     @if ($selectedItem->ratings->isNotEmpty())
                         @php
                             // Calculate pagination parameters
-                            $perPage = 5;
                             $currentPage = request()->input('page', 1);
                             $items = $selectedItem->ratings->slice(($currentPage - 1) * $perPage, $perPage);
                         @endphp

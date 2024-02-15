@@ -12,12 +12,30 @@ class PurchaseController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $userItems = Purchase::all();
-
+        // Check if filter parameters are provided in the request
+        if ($request->filled('coffee_type')) {
+            // Validate the request
+            $request->validate([
+                'coffee_type' => 'required|array', // Ensure coffee_type is an array
+                'coffee_type.*' => 'in:green,roasted,grinded', // Validate each coffee type
+            ]);
+            
+            // Extract the selected coffee types from the request
+            $selectedCoffeeTypes = $request->input('coffee_type');
+    
+            // Query the purchases table based on the selected coffee types
+            $userItems = Purchase::whereIn('coffee_type', $selectedCoffeeTypes)->distinct()->get();
+        } else {
+            // No filter parameters provided, so get all items
+            $userItems = Purchase::distinct()->get();
+        }
+    
+        // Return the view with the filtered or unfiltered items
         return view('Features.purchase', compact('userItems'));
     }
+    
 
     public function destroy($id)
     {
@@ -36,6 +54,7 @@ class PurchaseController extends Controller
             'item_price' => 'required|numeric',
             'item_stock' => 'required|integer',
             'item_description' => 'required|string|max:255',
+            'coffee_type' => 'required|in:green,roasted,grinded',
             'expiry_date' => 'required|date|after_or_equal:today',
         ]);
     
@@ -45,6 +64,7 @@ class PurchaseController extends Controller
         $item = new Purchase();
         $item->user_id = $user->id;
         $item->item_name = $request->item_name;
+        $item->coffee_type = $request->coffee_type; // Corrected typo here
     
         // Handle item_image upload and save its path
         if ($request->hasFile('item_image')) {
@@ -58,5 +78,6 @@ class PurchaseController extends Controller
         $item->save();
     
         return redirect()->back()->with('success', 'Item Created');
-    }    
+    }
+    
 }

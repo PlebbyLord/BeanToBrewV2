@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mapping;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MappingController extends Controller
 {
@@ -31,14 +32,19 @@ class MappingController extends Controller
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
         ]);
-
+    
         // Create a new location
         $location = new Mapping();
         $location->name = $request->input('name');
         $location->latitude = $request->input('latitude');
         $location->longitude = $request->input('longitude');
+    
+        // Assign the user_id from the authenticated user
+        $location->user_id = Auth::id(); 
+    
+        // Save the location to the database
         $location->save();
-
+    
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Location saved successfully.');
     }

@@ -46,6 +46,14 @@
                             <label for="item_name" class="form-label">Item Name</label>
                             <input type="text" class="form-control" id="item_name" name="item_name" required>
                         </div>
+                        <div class="form-group">
+                            <label for="coffee_type">Select Coffee Type:</label>
+                            <select class="form-control" id="coffee_type" name="coffee_type">
+                                <option value="green">Green Coffee Beans</option>
+                                <option value="roasted">Roasted Coffee Beans</option>
+                                <option value="grinded">Grinded Coffee Beans</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label for="item_image">Item Image (jpg, jpeg, png only)</label>
                             <input type="file" name="item_image" class="form-control" accept=".jpg, .jpeg, .png" required>
@@ -90,6 +98,7 @@
                             <tr>
                                 <th>Item Image</th>
                                 <th>Item Name</th>
+                                <th>Coffee Type</th>
                                 <th>Item Price per Kilo</th>
                                 <th>Item Stock</th>
                                 <th>Expiry Date</th>
@@ -102,6 +111,7 @@
                             <tr>
                                 <td><img src="{{ asset('storage/' . $purchase->item_image) }}" alt="{{ $purchase->item_name }}" style="max-width: 75px;"></td>
                                 <td>{{ $purchase->item_name }}</td>
+                                <td>{{ $purchase->coffee_type }}</td>
                                 <td>{{ $purchase->item_price }}</td>
                                 <td>{{ $purchase->item_stock }}</td>
                                 <td>{{ $purchase->expiry_date }}</td>

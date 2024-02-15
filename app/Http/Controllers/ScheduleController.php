@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
@@ -113,7 +114,10 @@ class ScheduleController extends Controller
     $schedule->Harvest_Date = $bestDateForHarvest;
     $schedule->Schedule_Type = 'Planting'; // Assuming it's planting schedule
     $schedule->batch_number = $batchNumber;
+    $schedule->user_id = Auth::id(); 
     $schedule->save();
+
+   
 
     // Use linear regression to predict the harvest date five years from planting date
     $plantingDate = Carbon::parse($validatedData['calendar']);
@@ -160,7 +164,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Pruning';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id();
         $schedule->save();
+
+         
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -203,7 +210,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Pesticide Spraying';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id(); 
         $schedule->save();
+
+        
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -246,7 +256,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Drying';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id(); 
         $schedule->save();
+
+        
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -289,7 +302,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Fermenting';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id();
         $schedule->save();
+
+        
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -332,7 +348,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Grinding';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id();
         $schedule->save();
+
+        
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -375,7 +394,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Hulling';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id();
         $schedule->save();
+
+        
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -418,7 +440,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Packaging';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id(); 
         $schedule->save();
+
+        
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -461,7 +486,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Pulping';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id();
         $schedule->save();
+
+         
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -504,7 +532,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Roasting';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id(); 
         $schedule->save();
+
+       
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
@@ -547,7 +578,10 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Sorting';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->user_id = Auth::id(); 
         $schedule->save();
+
+        
     
         // Redirect or respond accordingly
         return redirect()->back()->with('success', 'Schedule saved successfully.');
