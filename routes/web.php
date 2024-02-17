@@ -65,9 +65,11 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/sales', [App\Http\Controllers\SalesController::class, 'index'])->name('features.sales');
     Route::get('/sales/pending', [App\Http\Controllers\SalesController::class, 'pending'])->name('features.pending');
     Route::post('/save-item', [App\Http\Controllers\PurchaseController::class, 'saveItem'])->name('save.item');
-    Route::delete('/purchase/{id}', [App\Http\Controllers\PurchaseController::class, 'destroy'])->name('purchase.delete');
     Route::post('/deliver/{cartId}', [App\Http\Controllers\SalesController::class, 'DeliverSend'])->name('deliver.send');
     Route::get('/mappingsave', [App\Http\Controllers\MappingController::class, 'mappingsave'])->name('features.mappingsave');
     Route::post('/mapping/save', [App\Http\Controllers\MappingController::class, 'save'])->name('mapping.save');
+    Route::get('/transfer/{purchase_id}', [App\Http\Controllers\PurchaseController::class, 'transferPage'])->name('features.transfer');
+    Route::post('/transfer/item', [App\Http\Controllers\PurchaseController::class, 'transferItem'])->name('transfer.item');
+
 
 });

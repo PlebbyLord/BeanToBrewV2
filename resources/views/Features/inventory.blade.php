@@ -54,6 +54,14 @@
                                 <option value="grinded">Grinded Coffee Beans</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="branch">Select Branch:</label>
+                            <select class="form-control" id="branch" name="branch">
+                                @foreach($branches as $name)
+                                    <option value="{{ $name }}">{{ $name }}</option>
+                                @endforeach
+                            </select>
+                        </div>                        
                         <div class="mb-3">
                             <label for="item_image">Item Image (jpg, jpeg, png only)</label>
                             <input type="file" name="item_image" class="form-control" accept=".jpg, .jpeg, .png" required>
@@ -99,6 +107,7 @@
                                 <th>Item Image</th>
                                 <th>Item Name</th>
                                 <th>Coffee Type</th>
+                                <th>Branch</th>
                                 <th>Item Price per Kilo</th>
                                 <th>Item Stock</th>
                                 <th>Expiry Date</th>
@@ -112,16 +121,20 @@
                                 <td><img src="{{ asset('storage/' . $purchase->item_image) }}" alt="{{ $purchase->item_name }}" style="max-width: 75px;"></td>
                                 <td>{{ $purchase->item_name }}</td>
                                 <td>{{ $purchase->coffee_type }}</td>
+                                <td>{{ $purchase->branch }}</td>
                                 <td>{{ $purchase->item_price }}</td>
-                                <td>{{ $purchase->item_stock }}</td>
+                                <td class="{{ $purchase->item_stock <= 50 ? 'text-danger' : ($purchase->item_stock >= 4000 ? 'text-success' : '') }}">
+                                    {{ $purchase->item_stock }}
+                                    @if($purchase->item_stock <= 50)
+                                        (low)
+                                    @elseif($purchase->item_stock >= 4000)
+                                        (high)
+                                    @endif
+                                </td>                                                             
                                 <td>{{ $purchase->expiry_date }}</td>
                                 <td>{{ $purchase->item_description }}</td>
                                 <td>
-                                    <form method="post" action="{{ route('purchase.delete', ['id' => $purchase->id]) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
+                                    <a href="{{ route('features.transfer', ['purchase_id' => $purchase->id]) }}" class="btn btn-primary">Transfer</a>
                                 </td>
                             </tr>
                             @endforeach                                             
@@ -129,10 +142,8 @@
                     </table>
                 </div>
             </div>
-            
         </div>
-    </div>
-
+    </div>    
 </body>
 </html>
 @endsection

@@ -16,13 +16,33 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         @foreach($mappings as $mapping)
-        <div class="col-md-8">
+        <div class="col-md-8 mb-4">
             <div class="card">
                 <div class="card-header">
-                    {{ $mapping->name }} Branch <!-- Assuming 'name' is the field containing the name in your mappings table -->
+                    {{ $mapping->name }} Branch
                 </div>
-                <div class="card-body" style="height: 300px;"> <!-- Adjusted height -->
-                    <div id="map-{{ $mapping->id }}" style="height: 100%;"></div>
+                <div class="card-body" style="height: 300px;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div id="map-{{ $mapping->id }}" style="height: 300px; width: 400px;"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Available Items
+                                </div>
+                                <div class="card-body">
+                                    <ul>
+                                        @foreach($purchases as $purchase)
+                                            @if($purchase->branch === $mapping->name)
+                                                <li>{{ $purchase->item_name }}</li>
+                                            @endif
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <p><a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a></p>
@@ -74,6 +94,5 @@
             console.error('Error fetching mapping data:', error);
         });
 </script>
-
 
 @endsection

@@ -99,12 +99,17 @@
                                     </div>
                                     <div class="col-md-5">
                                         <div class="d-flex justify-content-start align-items-center" style="margin-top: 0px;">
-                                            @if ($cart->delivery_status == 2)
-                                            <form method="POST" action="{{ route('orders.updateDeliveryStatus', ['cartId' => $cart->id]) }}">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 15px; margin-left: 1080px; width: 130px;">Order Received</button>
-                                            </form>
+                                            @if ($cart->delivery_status == 2 && !$cart->is_received)
+                                                <form id="orderReceivedForm-{{ $cart->id }}" method="POST" action="{{ route('orders.updateDeliveryStatus', ['cartId' => $cart->id]) }}" onsubmit="return validateForm()">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="btn btn-primary btn-sm" onclick="disableButton({{ $cart->id }})" style="font-size: 15px; margin-left: 1080px; width: 130px;">Order Received</button>
+                                                    <div id="loadingSpinner" class="d-none text-center mt-2">
+                                                        <div class="spinner-border text-primary" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             @endif
                                         </div>
                                     </div>
@@ -149,5 +154,34 @@
             @endforeach
         </div>
     </div>
+
+    <script>
+        var isSubmitting = false;
+    
+        function validateForm() {
+            if (isSubmitting) {
+                return false; // Ignore additional clicks while submitting
+            }
+    
+            isSubmitting = true; // Set to true to indicate the form is being submitted
+            var submitBtn = document.getElementById('submitBtn');
+            var loadingSpinner = document.getElementById('loadingSpinner');
+    
+            submitBtn.setAttribute('disabled', 'disabled'); // Disable the button to prevent multiple submissions
+            loadingSpinner.classList.remove('d-none'); // Show the loading spinner
+    
+            // You can optionally remove the disabled attribute and hide the spinner after processing the submission
+            // This would typically be done in the success or error callback of your form submission
+            // For simplicity, I'm just simulating a 5-second delay here
+            setTimeout(function () {
+                submitBtn.removeAttribute('disabled');
+                loadingSpinner.classList.add('d-none');
+                isSubmitting = false; // Reset the flag when submission is complete
+            }, 5000); // Adjust the time as needed (5 seconds in this example)
+    
+            return true; // Allow the form to be submitted
+        }
+    </script>
+
 @endif
 @endsection

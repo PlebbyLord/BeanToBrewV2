@@ -20,6 +20,7 @@ class Purchase extends Model
         'expiry_date',
         'item_description',
         'coffee_type',
+        'branch',
         // Add other fields as needed
     ];
 
@@ -32,5 +33,6 @@ class Purchase extends Model
     {
         return $this->hasMany(Rating::class, 'purchase_id', 'id');
     }
+
 }
 

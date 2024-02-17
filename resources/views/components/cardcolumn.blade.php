@@ -11,7 +11,7 @@
                             <img src="{{ asset('storage/' . $buy->item_image) }}" class="card-img-top" alt="{{ $buy->item_name }}">
                             <h5 class="card-title">{{ $buy->item_name }}</h5>
                             <p class="card-text">{{ $buy->item_price }}/Kilo</p>
-                            <p class="card-text">Expiry Date {{ $buy->expiry_date }}</p>
+                            <p class="card-text">{{ $buy->branch }} Branch</p>
                             
                             {{-- Calculate average rating --}}
                             @php
@@ -34,6 +34,7 @@
                                 @endphp
                                 <i class="fas fa-coffee fa-1x coffee-icon {{ $glowClass }}"></i>
                             @endfor
+                            <p>({{ $totalRatings }})</p>
                         </a>
                     </div>
                 </div>

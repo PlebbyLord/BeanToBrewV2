@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderDelivered;
 use App\Models\Cart;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class OrdersController extends Controller
 {
@@ -30,13 +32,26 @@ class OrdersController extends Controller
         return view('Features.orders', compact('carts'));
     }
 
-        public function updateDeliveryStatus(Request $request, $cartId)
+    public function updateDeliveryStatus(Request $request, $cartId)
     {
-        // Find the cart and update the delivery status
-        Cart::where('id', $cartId)
-            ->where('delivery_status', 2)
-            ->update(['delivery_status' => 3]);
-                
+        // Find the cart
+        $cart = Cart::findOrFail($cartId);
+    
+        // Check if the cart has an associated order
+        if (!$cart->orders()->exists()) {
+            return redirect()->back()->with('error', 'Failed to update delivery status. Order not found for the cart.');
+        }
+    
+        // Get the first order associated with the cart
+        $order = $cart->orders()->first();
+    
+        // Send email to yourself
+        $adminEmail = 'beantobrew24@gmail.com'; // Replace with your email
+        Mail::to($adminEmail)->send(new OrderDelivered($cart, $order)); // Pass $cart and $order variables to the email template
+        
+        // Update the delivery status
+        $cart->update(['delivery_status' => 3]);
+    
         // Redirect back or to a specific page
         return redirect()->back()->with('success', 'Delivery status updated successfully.');
     }

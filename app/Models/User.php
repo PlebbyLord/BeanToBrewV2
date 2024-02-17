@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Cart::class);
     }
+
+    public function rating(): RelationsHasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
 }

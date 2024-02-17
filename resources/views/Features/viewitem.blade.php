@@ -16,14 +16,14 @@
                         </div>
                         @php
                         // Calculate the average rating for the specific item
-                        $ratings = App\Models\Rating::where('purchase_id', $selectedItem->id)->pluck('rating')->toArray();
-                        $totalRatings = count($ratings);
-                        $averageRating = $totalRatings > 0 ? array_sum($ratings) / $totalRatings : 0;
-                        
-                        // Determine the integer and fractional parts of the average rating
-                        $integerPart = floor($averageRating);
-                        $fractionalPart = $averageRating - $integerPart;
-                    @endphp
+                            $ratings = App\Models\Rating::where('purchase_id', $selectedItem->id)->pluck('rating')->toArray();
+                            $totalRatings = count($ratings);
+                            $averageRating = $totalRatings > 0 ? array_sum($ratings) / $totalRatings : 0;
+                            
+                            // Determine the integer and fractional parts of the average rating
+                            $integerPart = floor($averageRating);
+                            $fractionalPart = $averageRating - $integerPart;
+                        @endphp
                     
                     <div class="col-md-6 d-flex justify-content-end align-items-center">
                         <!-- Display the "Rating" text and coffee cup icons -->
@@ -41,6 +41,7 @@
                             @endphp
                             <i class="fas fa-coffee fa-1x coffee-icon {{ $glowClass }}"></i>
                         @endfor
+                        <span>({{ $totalRatings }})</span> <!-- Display the total number of ratings -->
                     </div>                    
                     </div>
                 </div>
@@ -129,6 +130,7 @@
     </div>
 </div>
 
+
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-7">
@@ -136,50 +138,32 @@
                 <div class="card-header">
                     <h5>Comments</h5>
                 </div>
-                <div class="card-body">
-                    @php
-                    // Initialize $perPage outside of the if block
-                    $perPage = 5;
-                    @endphp
-                    @if ($selectedItem->ratings->isNotEmpty())
-                        @php
-                            // Calculate pagination parameters
-                            $currentPage = request()->input('page', 1);
-                            $items = $selectedItem->ratings->slice(($currentPage - 1) * $perPage, $perPage);
-                        @endphp
-
-                        <div class="row justify-content-center">
-                            @foreach($items as $rating)
-                                <div class="col-md-12">
-                                    <div class="card mb-3">
-                                        <div class="card-header">
-                                            <!-- Display the user's name -->
-                                            {{ $rating->user->name }}
-                                        </div>
-                                        <div class="card-body">
-                                            <!-- Display the comment -->
-                                            {{ $rating->comment }}
-                                        </div>
+                <div class="card-body comments-container">
+                    @if($comments->isNotEmpty())
+                        @foreach($comments as $comment)
+                            <div class="col-md-12">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <!-- Check if the user relationship exists -->
+                                        {{ $comment->user->name }}
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Display the comment -->
+                                        {{ $comment->comment }}
                                     </div>
                                 </div>
-                            @endforeach
+                            </div>
+                        @endforeach
+                        {{-- Pagination --}}
+                        <div class="d-flex justify-content-center">
+                            {{ $comments->appends(['id' => $selectedItem->id])->links() }}
                         </div>
                     @else
-                        <p>No ratings available for this item.</p>
+                        <p>No comments available for this item.</p>
                     @endif
                 </div>
-                @if ($selectedItem->ratings->count() > $perPage)
-                    <div class="card-footer">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8">
-                                {{ $selectedItem->ratings->links() }}
-                            </div>
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
     </div>
 </div>
-
 @endsection
