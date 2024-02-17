@@ -8,6 +8,12 @@
             <h5>Pending Deliveries</h5>
         </div> 
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -45,9 +51,14 @@
                             <td>{{ $order->created_at }}</td>
                             <td>
                                 @if($order->cart->delivery_status == 1)
-                                    <form method="POST" action="{{ route('deliver.send', ['cartId' => $order->cart_id]) }}">
+                                    <form id="deliverNowForm-{{ $order->cart_id }}" method="POST" action="{{ route('deliver.send', ['cartId' => $order->cart_id]) }}" onsubmit="return validateDeliveryForm({{ $order->cart_id }})">
                                         @csrf
-                                        <button type="submit" class="btn btn-primary btn-sm">Deliver Now</button>
+                                        <button type="submit" class="btn btn-primary btn-sm" id="submitBtn-{{ $order->cart_id }}">Deliver Now</button>
+                                        <div id="loadingSpinner-{{ $order->cart_id }}" class="d-none text-center mt-2">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
                                     </form>
                                 @elseif($order->cart->delivery_status == 2)
                                     Out For Delivery
@@ -62,5 +73,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    var isSubmitting = {};
+
+    function validateDeliveryForm(cartId) {
+        if (isSubmitting[cartId]) {
+            return false; // Ignore additional clicks while submitting
+        }
+
+        isSubmitting[cartId] = true; // Set to true to indicate the form is being submitted
+        var submitBtn = document.getElementById('submitBtn-' + cartId);
+        var loadingSpinner = document.getElementById('loadingSpinner-' + cartId);
+
+        submitBtn.setAttribute('disabled', 'disabled'); // Disable the button to prevent multiple submissions
+        loadingSpinner.classList.remove('d-none'); // Show the loading spinner
+
+        // You can optionally remove the disabled attribute and hide the spinner after processing the submission
+        // This would typically be done in the success or error callback of your form submission
+        // For simplicity, I'm just simulating a 5-second delay here
+        setTimeout(function () {
+            submitBtn.removeAttribute('disabled');
+            loadingSpinner.classList.add('d-none');
+            isSubmitting[cartId] = false; // Reset the flag when submission is complete
+        }, 9000); // Adjust the time as needed (5 seconds in this example)
+
+        return true; // Allow the form to be submitted
+    }
+</script>
 
 @endsection

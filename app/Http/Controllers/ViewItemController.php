@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Purchase;
+use App\Models\Rating;
 use App\Models\ViewItem;
 use Illuminate\Http\Request;
 
@@ -14,10 +15,11 @@ class ViewItemController extends Controller
     public function index(Request $request)
     {
         $itemId = $request->query('id');    
-        $selectedItem = Purchase::find($itemId);
-    
+        $selectedItem = Purchase::with('ratings')->find($itemId);
+        
         return view('Features.viewitem', compact('selectedItem'));
     }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -72,7 +74,7 @@ class ViewItemController extends Controller
         if (!$id) {
             $id = $request->query('id');
         }
-
+    
         if (!$id) {
             return redirect()->back()->with('error', 'Item ID not provided.');
         }
@@ -83,6 +85,10 @@ class ViewItemController extends Controller
             return redirect()->back()->with('error', 'Item not found.');
         }
     
-        return view('Features.viewitem', compact('selectedItem'));
+        // Load ratings associated with the selected item and paginate them by 3
+        $comments = $selectedItem->ratings()->with('user')->paginate(3);
+    
+        return view('Features.viewitem', compact('selectedItem', 'comments'));
     }
+    
 }

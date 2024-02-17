@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mapping;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +17,24 @@ class MappingController extends Controller
     public function index()
     {
         $mappings = Mapping::all();
-        return view('Features.mapping', ['mappings' => $mappings]);
+        
+        // Fetch items from the purchase table for each mapping
+        $mappingItems = [];
+        foreach ($mappings as $mapping) {
+            $items = Purchase::where('branch', $mapping->name)->get();
+            $mappingItems[$mapping->id] = $items;
+        }
+    
+        $purchases = Purchase::all(); // Fetch all purchases
+    
+        return view('Features.mapping', [
+            'mappings' => $mappings, 
+            'mappingItems' => $mappingItems,
+            'purchases' => $purchases, // Pass the $purchases variable to the view
+        ]);
     }
-
+    
+    
     public function mappingsave()
     {
         return view('Features.mappingsave');
