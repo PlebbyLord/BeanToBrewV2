@@ -86,9 +86,10 @@ class ViewItemController extends Controller
         }
     
         // Load ratings associated with the selected item and paginate them by 3
-        $comments = $selectedItem->ratings()->with('user')->paginate(3);
+        $comments = $selectedItem->ratings()->with('user')->orderBy('created_at', 'desc')->paginate(3);
     
         return view('Features.viewitem', compact('selectedItem', 'comments'));
     }
+    
     
 }
