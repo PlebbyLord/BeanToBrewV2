@@ -146,6 +146,16 @@
                                     <div class="card-header">
                                         <!-- Check if the user relationship exists -->
                                         {{ $comment->user->name }}
+                                        @php
+                                        $rating = $comment->rating; // Get the rating from the comment
+                                    @endphp
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        @php
+                                            // Determine the class for the coffee cup (filled or empty)
+                                            $cupClass = $i <= $rating ? 'fas' : 'far';
+                                        @endphp
+                                        <i class="{{ $cupClass }} fa-coffee text-warning"></i>
+                                    @endfor
                                     </div>
                                     <div class="card-body">
                                         <!-- Display the comment -->
@@ -166,4 +176,5 @@
         </div>
     </div>
 </div>
+
 @endsection
