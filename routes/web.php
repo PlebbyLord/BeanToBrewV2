@@ -51,6 +51,9 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/get-batch-numbers', [ScheduleController::class,'getBatchNumbers'])->name('get-batch-numbers');
     Route::get('/harvest', [ScheduleController::class, 'harvest'])->name('harvest');
     Route::get('/history', [ScheduleController::class, 'history'])->name('history');
+    Route::post('/sched-start/{id}', [ScheduleController::class, 'schedStart'])->name('schedStart');
+    Route::post('/update-progress/{id}', [ScheduleController::class, 'updateProgress'])->name('updateProgress');         
+    Route::get('/completed', [ScheduleController::class, 'completed'])->name('completed');
     Route::get('/pesticide', [ScheduleController::class, 'pesticide'])->name('pesticide');
     Route::get('/prune', [ScheduleController::class, 'prune'])->name('prune');
     Route::get('/dry', [ScheduleController::class, 'dry'])->name('dry');

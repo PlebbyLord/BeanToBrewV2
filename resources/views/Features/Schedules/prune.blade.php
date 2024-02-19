@@ -15,6 +15,11 @@
             </div>
         </div> 
         <div class="card-body">
+            @if(session('success'))
+            <div class="alert alert-success" role="alert">
+                {{ session('success') }}
+            </div>
+            @endif
             <form method="post" action="{{ route('prune-schedule') }}">
                 @csrf
                 <div class="form-group">

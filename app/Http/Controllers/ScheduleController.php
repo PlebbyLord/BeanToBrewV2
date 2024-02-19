@@ -36,12 +36,12 @@ class ScheduleController extends Controller
 
     public function history()
     {
-        $schedules = Schedule::all();
+        $schedules = Schedule::whereIn('progress_status', [0, 1])->get();
     
         // Pass the data to the view and return it
         return view('Features.Schedules.history', compact('schedules'));
     }
-
+    
     public function pesticide()
     {
         return view('Features.Schedules.pesticide');
@@ -92,41 +92,71 @@ class ScheduleController extends Controller
         return view('Features.Schedules.pack');
     }
 
+    public function completed()
+    {
+        $schedules = Schedule::where('progress_status', 2)->get();
+    
+        // Pass the data to the view and return it
+        return view('Features.Schedules.completed', compact('schedules'));
+    }
+    
+
+    public function updateProgress($id)
+    {
+        $schedule = Schedule::findOrFail($id);
+        $schedule->update(['progress_status' => 2]);
+        return back()->with('success', 'Progress status updated successfully.');
+    }
+    
+    public function schedStart($id)
+    {
+        
+        $schedule = Schedule::findOrFail($id);
+        $schedule->update(['progress_status' => 1]);
+        return back()->with('success', 'Progress status updated successfully.');
+    }
+
+
     public function PlantingSave(Request $request)
-{
-    // Validate the request
-    $validatedData = $request->validate([
-        'coffeeType' => 'required|in:arabica,excelsa,liberica,robusta',
-        'calendar' => 'required|date',
-    ]);
+    {
+        // Validate the request
+        $validatedData = $request->validate([
+            'coffeeType' => 'required|in:arabica,excelsa,liberica,robusta',
+            'calendar' => 'required|date',
+        ]);
+    
+        // Calculate the best date for harvest (add 4 years to the selected date)
+        $harvestDate = Carbon::parse($request->input('calendar'))->addYears(5)->format('Y-m-d');
+    
+        // Determine the batch number based on existing records
+        $existingRecordsCount = Schedule::where('coffee_species', $validatedData['coffeeType'])->count();
+        $batchNumber = $existingRecordsCount + 1;
+    
+        // Save the planting schedule to the database
+        $plantingSchedule = new Schedule();
+        $plantingSchedule->coffee_species = $validatedData['coffeeType'];
+        $plantingSchedule->Date_Set = $validatedData['calendar'];
+        $plantingSchedule->Schedule_Type = 'Planting'; // Assuming it's planting schedule
+        $plantingSchedule->batch_number = $batchNumber;
+        $plantingSchedule->progress_status = 0; // Set progress_status to 0 initially
+        $plantingSchedule->user_id = Auth::id(); 
+        $plantingSchedule->save();
+    
+        // Save the harvesting schedule to the database
+        $harvestingSchedule = new Schedule();
+        $harvestingSchedule->coffee_species = $validatedData['coffeeType'];
+        $harvestingSchedule->Date_Set = $harvestDate; // Harvesting date is 5 years later
+        $harvestingSchedule->Schedule_Type = 'Harvesting'; // Assuming it's harvesting schedule
+        $harvestingSchedule->batch_number = $batchNumber;
+        $harvestingSchedule->progress_status = 0; // Set progress_status to 0 initially
+        $harvestingSchedule->user_id = Auth::id(); 
+        $harvestingSchedule->save();
+    
+        // Redirect or respond accordingly
+        return redirect()->back()->with('success', 'Planting and Harvesting schedules saved successfully.');
+    }
+    
 
-    // Calculate the best date for harvest (add 4 years to the selected date)
-    $bestDateForHarvest = Carbon::parse($request->input('calendar'))->addYears(4)->format('Y-m-d');
-
-    // Determine the batch number based on existing records
-    $existingRecordsCount = Schedule::where('coffee_species', $validatedData['coffeeType'])->count();
-    $batchNumber = $existingRecordsCount + 1;
-
-    // Save the schedule to the database
-    $schedule = new Schedule();
-    $schedule->coffee_species = $validatedData['coffeeType'];
-    $schedule->Date_Set = $validatedData['calendar'];
-    $schedule->Harvest_Date = $bestDateForHarvest;
-    $schedule->Schedule_Type = 'Planting'; // Assuming it's planting schedule
-    $schedule->batch_number = $batchNumber;
-    $schedule->user_id = Auth::id(); 
-    $schedule->save();
-
-   
-
-    // Use linear regression to predict the harvest date five years from planting date
-    $plantingDate = Carbon::parse($validatedData['calendar']);
-    $harvestPrediction = $plantingDate->copy()->addYears(5)->format('Y-m-d');
-
-    // Redirect or respond accordingly
-    return redirect()->back()->with('success', 'Schedule saved successfully.')
-                              ->with('harvest_prediction', $harvestPrediction);
-}
     public function PruneSave(Request $request)
     {
         // Validate the request
@@ -164,6 +194,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Pruning';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id();
         $schedule->save();
 
@@ -210,6 +241,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Pesticide Spraying';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id(); 
         $schedule->save();
 
@@ -256,6 +288,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Drying';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id(); 
         $schedule->save();
 
@@ -302,6 +335,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Fermenting';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id();
         $schedule->save();
 
@@ -348,6 +382,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Grinding';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id();
         $schedule->save();
 
@@ -394,6 +429,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Hulling';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id();
         $schedule->save();
 
@@ -440,6 +476,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Packaging';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id(); 
         $schedule->save();
 
@@ -486,6 +523,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Pulping';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id();
         $schedule->save();
 
@@ -532,6 +570,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Roasting';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id(); 
         $schedule->save();
 
@@ -578,6 +617,7 @@ class ScheduleController extends Controller
         $schedule->Date_Set = $validatedData['calendar'];
         $schedule->Schedule_Type = 'Sorting';
         $schedule->batch_number = $validatedData['batchNumber'];
+        $schedule->progress_status = 0;
         $schedule->user_id = Auth::id(); 
         $schedule->save();
 

@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('coffee_species');
             $table->integer('batch_number');
             $table->date('Date_Set');
-            $table->date('Harvest_Date')->nullable();
             $table->string('Schedule_Type');
+            $table->tinyInteger('progress_status')->default(0);
             $table->timestamps();
         });
     }

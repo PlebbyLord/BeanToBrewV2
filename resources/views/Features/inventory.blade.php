@@ -16,16 +16,6 @@
     {{-- Header --}}
 
     {{-- Button For Modal --}}
-    @if (auth()->check() && auth()->user()->email == 'beantobrew24@gmail.com')
-        {{-- Adjust margins as needed --}}
-        <div class="d-flex justify-content-between" style="margin-top: 10px; margin-right: 10px; margin-left: 10px;">
-            {{-- <a href="{{ route('outofstock') }}" class="btn btn-primary">Out of Stock Items</a> --}}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Add New Item
-            </button>
-        </div>
-    @endif
-
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -96,9 +86,14 @@
 
     <div class="container mt-4">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Items in Stock</h5>
-            </div> 
+                @if (auth()->check() && auth()->user()->email == 'beantobrew24@gmail.com')
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        Add New Item
+                    </button>
+                @endif
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
