@@ -13,7 +13,7 @@ class Schedule extends Model
         'coffee_species',
         'batch_number',
         'Date_Set',
-        'Harvest_Date',
         'Schedule_Type',
+        'progress_status',
     ];
 }
