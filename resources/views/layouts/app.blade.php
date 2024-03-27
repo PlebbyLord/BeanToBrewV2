@@ -35,11 +35,17 @@
                             <a class="nav-link" href="/">Home</a>
                         </div>
                         @auth
-                        @if(Auth::user()->email == 'beantobrew24@gmail.com')
+                        @if(auth()->user()->role == 1 || auth()->user()->role == 2)
                             <div class="navbar-nav">
+                                @if(auth()->user()->role == 2)
+                                <a class="nav-link" href="{{ route('features.users') }}">{{ __('Users') }}</a>
                                 <a class="nav-link" href="{{ route('features.schedule') }}">{{ __('Schedule') }}</a>
+                                @endif
                                 <a class="nav-link" href="{{ route('features.inventory') }}">{{ __('Inventory') }}</a>
                                 <a class="nav-link" href="{{ route('features.sales') }}">{{ __('Sales') }}</a>
+                                @if(auth()->user()->role == 1)
+                                <a class="nav-link" href="{{ route('features.cashier') }}">{{ __('Cashier') }}</a>
+                                @endif
                             </div>
                         @endif
                         @endauth
@@ -51,7 +57,7 @@
                             <a class="nav-link" href="{{ route('features.mapping') }}">{{ __('Find A Store') }}</a>
                             <a class="nav-link" href="{{ route('features.purchase') }}">{{ __('Purchase') }}</a>
                             @auth
-                                @if(auth()->user()->email != 'beantobrew24@gmail.com')
+                            @if(auth()->user()->role == 0)
                                     <a class="nav-link" href="{{ route('features.cart') }}">{{ __('Cart') }}</a>
                                     <a class="nav-link" href="{{ route('features.orders') }}">{{ __('Orders') }}</a>
                                 @endif
@@ -71,12 +77,25 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                @if(auth()->user()->profile && auth()->user()->profile->profile_picture)
+                                    <img src="{{ asset('storage/' . auth()->user()->profile->profile_picture) }}" alt="Profile Picture" width="40" height="40" style="border-radius: 50%;">
+                                @else
+                                    <!-- You can use a default picture here if no profile picture is available -->
+                                    <img src="{{ asset('storage/users/default-avatar.jpg') }}" alt="Default Picture" width="40" height="40" style="border-radius: 50%;">
+                                @endif
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+                                    {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
                                 </a>
-
+                                
+                                
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('profile') }}">
+                                    {{ __('Profile') }}
+                                    </a> 
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

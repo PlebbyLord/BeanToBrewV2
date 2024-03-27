@@ -45,6 +45,12 @@
                             <a href="{{ route('sort') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Sorting</a>
                         </div>
                         <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('water') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Watering</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('weekly') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Weekly Checks</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
                             <a href="{{ route('history') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">History</a>
                         </div>
                     </div>

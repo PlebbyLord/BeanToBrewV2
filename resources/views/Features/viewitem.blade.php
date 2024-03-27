@@ -68,7 +68,7 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="expiry_date" class="col-md-4 col-form-label text-md-end">{{ __('Expiry Date:') }}</label>
+                                    <label for="expiry_date" class="col-md-4 col-form-label text-md-end">{{ __('Best before:') }}</label>
                                     <div class="col-md-8">
                                         {{ $selectedItem->expiry_date }}
                                     </div>
@@ -94,7 +94,7 @@
                                         <input type="hidden" name="expiry_date" value="{{ $selectedItem->expiry_date }}">
                                         <div class="col-md-8 offset-md-4">
                                             @auth
-                                                @if(auth()->user()->email != 'beantobrew24@gmail.com')
+                                                @if(auth()->user()->role != 1 && auth()->user()->role != 2)
                                                     <button type="submit" class="btn btn-primary">
                                                         {{ __('Add To Cart') }}
                                                     </button>
@@ -141,28 +141,45 @@
                 <div class="card-body comments-container">
                     @if($comments->isNotEmpty())
                         @foreach($comments as $comment)
-                            <div class="col-md-12">
-                                <div class="card mb-3">
-                                    <div class="card-header">
-                                        <!-- Check if the user relationship exists -->
-                                        {{ $comment->user->name }}
-                                        @php
-                                        $rating = $comment->rating; // Get the rating from the comment
-                                    @endphp
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        @php
-                                            // Determine the class for the coffee cup (filled or empty)
-                                            $cupClass = $i <= $rating ? 'fas' : 'far';
-                                        @endphp
-                                        <i class="{{ $cupClass }} fa-coffee text-warning"></i>
-                                    @endfor
-                                    </div>
-                                    <div class="card-body">
-                                        <!-- Display the comment -->
-                                        {{ $comment->comment }}
+                            @if($comment->comment_status == 0)
+                                <div class="col-md-12">
+                                    <div class="card mb-3">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <!-- Check if the user relationship exists -->
+                                            <div>
+                                                {{ substr($comment->user->first_name, 0, 1) . str_repeat('*', strlen($comment->user->first_name) - 2) . substr($comment->user->first_name, -1) }} {{ substr($comment->user->last_name, 0, 1) . str_repeat('*', strlen($comment->user->last_name) - 2) . substr($comment->user->last_name, -1) }}
+                                            </div>
+                                            
+                                            <!-- Coffee cups -->
+                                            <div class="d-flex align-items-center flex-grow-1"> <!-- Add flex-grow-1 class to make the container grow and push the button to the right -->
+                                                @php
+                                                    $rating = $comment->rating; // Get the rating from the comment
+                                                @endphp
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    @php
+                                                        // Determine the class for the coffee cup (filled or empty)
+                                                        $cupClass = $i <= $rating ? 'fas' : 'far';
+                                                    @endphp
+                                                    <i class="{{ $cupClass }} fa-coffee text-warning"></i>
+                                                @endfor
+                                            </div>
+                                            
+                                            <!-- "Hide Comment" button -->
+                                            @if(auth()->check() && auth()->user()->role == 2)
+                                                <form action="{{ route('comments.hide', ['id' => $comment->id]) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="btn btn-danger">Hide Comment</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Display the censored comment -->
+                                            {{ $comment->censored_comment ?? $comment->comment }}
+                                        </div>                                        
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         @endforeach
                         {{-- Pagination --}}
                         <div class="d-flex justify-content-center">

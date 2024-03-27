@@ -16,7 +16,7 @@ class RegisterController extends Controller
     |--------------------------------------------------------------------------
     |
     | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
+    | validation and creation. By default, this controller uses a trait to
     | provide this functionality without requiring any additional code.
     |
     */
@@ -49,11 +49,24 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'address' => ['nullable', 'string', 'max:255'], // Add validation for address field
+            'mobile_number' => [
+                'nullable',
+                'string',
+                'size:11',
+                function ($attribute, $value, $fail) {
+                    if (strlen($value) !== 11 || substr($value, 0, 2) !== '09') {
+                        $fail('Please use a valid Philippine mobile number with a total length of 11 characters, starting with "09".');
+                    }
+                },
+            ],
         ]);
     }
+    
 
     /**
      * Create a new user instance after a valid registration.
@@ -63,10 +76,23 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // Set default role to 0
+        $role = 0;
+
+        // Check if the email is beantobrew24@gmail.com
+        if ($data['email'] === 'beantobrew24@gmail.com') {
+            $role = 2; // Set role to 2
+        }
+
+        // Create user with role
         return User::create([
-            'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'address' => $data['address'], // Add address to user creation
+            'mobile_number' => $data['mobile_number'], // Add mobile number to user creation
+            'role' => $role, // Assign role based on email
         ]);
     }
 }

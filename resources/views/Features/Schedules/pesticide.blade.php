@@ -35,6 +35,15 @@
                     @enderror
                 </div>
                 <div class="form-group">
+                    <label for="location">Select Location:</label>
+                    <select class="form-control" id="location" name="location">
+                        <option value="Farm 1">Farm 1</option>
+                        <option value="Farm 2">Farm 2</option>
+                        <option value="Farm 3">Farm 3</option>
+                        <option value="Farm 4">Farm 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="batchNumber">Enter Batch Number:</label>
                     <input type="number" class="form-control" id="batchNumber" name="batchNumber" placeholder="Enter batch number...">
 

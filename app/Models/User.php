@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -19,9 +19,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'address',
+        'mobile_number', // Added mobile_number to mass assignable attributes
+        'role', // Added role to mass assignable attributes
+        'branch',
     ];
 
     /**
@@ -63,4 +68,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rating::class);
     }
+
+    public function cashier(): RelationsHasMany
+    {
+        return $this->hasMany(Cashier::class);
+    }
+
+    public function tempcash(): RelationsHasMany
+    {
+        return $this->hasMany(TempCash::class);
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
 }

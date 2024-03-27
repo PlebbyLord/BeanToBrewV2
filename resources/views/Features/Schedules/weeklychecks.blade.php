@@ -10,7 +10,7 @@
                     <a href="{{ route('features.schedule') }}" class="btn btn-sm btn-primary btn-lg px-4" style="font-size: 15px;">Back</a>
                 </div>
                 <div class="col-9 text-center">
-                    <h5>Fermenting Schedule</h5>
+                    <h5>Weekly Checks Schedule</h5>
                 </div>
             </div>
         </div> 
@@ -20,7 +20,7 @@
                 {{ session('success') }}
             </div>
             @endif
-            <form method="post" action="{{ route('ferment-schedule') }}">
+            <form method="post" action="{{ route('weekly-schedule') }}">
                 @csrf
                 <div class="form-group">
                     <label for="coffeeType">Select Coffee Species:</label>

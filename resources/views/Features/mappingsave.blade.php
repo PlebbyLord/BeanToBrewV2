@@ -15,7 +15,7 @@
                 <div class="card-footer">
                     <p><a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a></p>
                     @auth
-                        @if(auth()->user()->email == 'beantobrew24@gmail.com')
+                        @if(auth()->user()->role == 2)
                             <button class="btn btn-primary" id="addLocationBtn">Save New Location</button>
                         @endif
                     @endauth
