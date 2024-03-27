@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Mapping;
 use App\Models\Purchase;
+use App\Models\TempInv;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
@@ -26,11 +28,16 @@ class PurchaseController extends Controller
             // Extract the selected coffee types from the request
             $selectedCoffeeTypes = $request->input('coffee_type');
     
-            // Query the purchases table based on the selected coffee types
-            $userItems = Purchase::whereIn('coffee_type', $selectedCoffeeTypes)->distinct()->get();
+            // Query the purchases table based on the selected coffee types and transfer_status
+            $userItems = Purchase::whereIn('coffee_type', $selectedCoffeeTypes)
+                ->where('transfer_status', 0) // Add condition for transfer_status
+                ->distinct()
+                ->get();
         } else {
-            // No filter parameters provided, so get all items
-            $userItems = Purchase::distinct()->get();
+            // No filter parameters provided, so get all items with transfer_status = 0
+            $userItems = Purchase::where('transfer_status', 0) // Add condition for transfer_status
+                ->distinct()
+                ->get();
         }
     
         // Return the view with the filtered or unfiltered items
@@ -44,23 +51,42 @@ class PurchaseController extends Controller
             'item_image' => 'required|file|mimes:jpg,jpeg,png',
             'item_price' => 'required|numeric',
             'item_stock' => 'required|integer',
-            'item_description' => 'required|string|max:255',
+            'item_description' => 'required|string',
             'coffee_type' => 'required|in:green,roasted,grinded',
             'expiry_date' => 'required|date|after_or_equal:today',
+            'production_date' => 'required|date|after_or_equal:today', // Validate production date
             'branch' => 'required|exists:mappings,name', // Validate that the selected branch exists
         ]);
-
+    
         $user = auth()->user();
-
+    
+        // Fetch the production date from the request
+        $productionDate = $request->production_date;
+    
+        // Calculate expiry date based on coffee type
+        $expiryDate = $productionDate; // Set expiry date as production date initially
+    
+        switch ($request->coffee_type) {
+            case 'green':
+                $expiryDate = Carbon::parse($productionDate)->addYears(2); // Expiry after 2 years for green coffee
+                break;
+            case 'roasted':
+                $expiryDate = Carbon::parse($productionDate)->addYears(1)->addMonths(6); // Expiry after 1 year 6 months for roasted coffee
+                break;
+            case 'grinded':
+                $expiryDate = Carbon::parse($productionDate)->addMonths(6); // Expiry after 6 months for ground coffee
+                break;
+        }
+    
         // Create a new Purchase instance
         $item = new Purchase();
         $item->user_id = $user->id;
         $item->item_name = $request->item_name;
         $item->coffee_type = $request->coffee_type;
-        
-        // Set the branch ID
+        $item->production_date = $productionDate; // Set production date
+        $item->expiry_date = $expiryDate;
         $item->branch = $request->branch;
-
+    
         // Handle item_image upload and save its path
         if ($request->hasFile('item_image')) {
             $imagePath = $request->file('item_image')->store('images', 'public');
@@ -69,69 +95,232 @@ class PurchaseController extends Controller
         $item->item_price = $request->item_price;
         $item->item_stock = $request->item_stock;
         $item->item_description = $request->item_description;
-        $item->expiry_date = $request->expiry_date;
         $item->save();
-
+    
         return redirect()->back()->with('success', 'Item Created');
     }
+    
+    public function transferPage(Request $request)
+    {
+        // Retrieve the current user's branch
+        $currentUserBranch = auth()->user()->branch;
+    
+        // Retrieve items from other branches
+        $otherBranchItems = Purchase::where('branch', '!=', $currentUserBranch)->get();
+    
+        // Retrieve items from the temp_invs table
+        $tempInvs = TempInv::where('user_id', auth()->id())->get();
+    
+        // Pass the other branch items and temp inv items to the view
+        return view('features.transfer', ['otherBranchItems' => $otherBranchItems, 'tempInvs' => $tempInvs]);
+    }
 
-    public function transferPage($purchase_id)
+    public function addToTempInv(Request $request)
     {
-        // Find the selected purchase item
-        $selectedPurchase = Purchase::findOrFail($purchase_id);
-    
-        // Fetch all branches from the mappings table
-        $branches = Mapping::pluck('name');
-    
-        return view('features.transfer', compact('selectedPurchase', 'branches'));
-    }    
-    
-    public function transferItem(Request $request)
-    {
+        // Validate the request data
         $request->validate([
             'purchase_id' => 'required|exists:purchases,id',
-            'branch' => 'required|exists:mappings,name',
-            'item_stock' => 'required|integer|min:1', // Ensure item_stock is a positive integer
         ]);
-    
-        // Find the purchase item by its ID
+        
+        // Retrieve the purchase details
         $purchase = Purchase::findOrFail($request->purchase_id);
     
-        // Get the selected branch name from the request
-        $newBranch = $request->branch;
+        // Retrieve the current user's branch
+        $currentUserBranch = auth()->user()->branch;
     
-        // Get the selected item stock from the request
-        $itemStock = $request->item_stock;
+        // Calculate transfer and arrival dates
+        $transferDate = Carbon::today();
+        $arrivalDate = Carbon::today()->addDays(2);
     
-        // Find if the item already exists in the selected branch
-        $existingPurchase = Purchase::where('item_name', $purchase->item_name)
-                                     ->where('branch', $newBranch)
-                                     ->first();
+        // Check if the item already exists in the temp_invs table
+        $existingTempInv = TempInv::where('purchase_id', $request->purchase_id)
+            ->where('user_id', auth()->id())
+            ->first();
     
-        if ($existingPurchase) {
-            // Increment the item stock of the existing purchase
-            $existingPurchase->item_stock += $itemStock;
-            $existingPurchase->save();
+        if ($existingTempInv) {
+            // Increment the quantity by 1
+            $existingTempInv->increment('quantity', 1);
         } else {
-            // Create a new purchase record for the new branch
-            $newPurchase = new Purchase();
-            $newPurchase->user_id = $purchase->user_id; // Assuming you have a user_id field in the Purchase model
-            $newPurchase->item_name = $purchase->item_name;
-            $newPurchase->coffee_type = $purchase->coffee_type;
-            $newPurchase->branch = $newBranch;
-            $newPurchase->item_image = $purchase->item_image;
-            $newPurchase->item_price = $purchase->item_price;
-            $newPurchase->item_stock = $itemStock;
-            $newPurchase->item_description = $purchase->item_description;
-            $newPurchase->expiry_date = $purchase->expiry_date;
-            $newPurchase->save();
+            // Create a new record in the temp_invs table
+            TempInv::create([
+                'user_id' => auth()->id(),
+                'purchase_id' => $request->purchase_id,
+                'item_name' => $purchase->item_name,
+                'item_image' => asset('storage/' . $purchase->item_image), // Use placeholder image if item image is not available
+                'item_price' => $purchase->item_price,
+                'item_stock' => $purchase->item_stock,
+                'expiry_date' => $purchase->expiry_date,
+                'item_description' => $purchase->item_description,
+                'coffee_type' => $purchase->coffee_type,
+                'branch' => $purchase->branch,
+                'production_date' => $purchase->production_date,
+                'transfer_date' => $transferDate,
+                'requested_by' => $currentUserBranch,
+                'transfer_status' => 1,
+                'quantity' => 1,
+            ]);
         }
     
-        // Decrement the item stock of the current purchase
-        $purchase->item_stock -= $itemStock;
-        $purchase->save();
-    
-        return redirect()->back()->with('success', 'Item transferred successfully.');
+        return redirect()->back()->with('success', 'Item added successfully');
     }
     
+    public function changeQuantity(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'temp_inv_id' => 'required|exists:temp_invs,id',
+            'quantity' => 'required|numeric|min:1',
+        ]);
+
+        // Retrieve the temp inventory item
+        $tempInv = TempInv::findOrFail($request->temp_inv_id);
+
+        // Retrieve the associated purchase
+        $purchase = Purchase::find($tempInv->purchase_id);
+
+        // Check if the requested quantity exceeds the item stock
+        if ($request->quantity > $purchase->item_stock) {
+            return redirect()->back()->with('error', 'Requested quantity exceeds available stock');
+        }
+
+        // Update the quantity for the given temp_inv_id
+        $tempInv->quantity = $request->quantity;
+        $tempInv->save();
+
+        // Redirect back or to a specific page
+        return redirect()->back()->with('success', 'Quantity updated successfully');
+    }
+
+    public function remove(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'temp_inv_id' => 'required|exists:temp_invs,id',
+        ]);
+
+        // Find the temp_inv record
+        $tempInv = TempInv::findOrFail($request->temp_inv_id);
+
+        // Delete the temp_inv record
+        $tempInv->delete();
+
+        // Redirect back or to a specific page
+        return redirect()->back()->with('success', 'Item removed successfully');
+    }
+
+    public function request()
+    {
+        // Retrieve all items from the TempInv table
+        $tempInvs = TempInv::where('user_id', auth()->id())->get();
+    
+        // Retrieve the current user's branch
+        $currentUserBranch = auth()->user()->branch;
+    
+        // Calculate transfer and arrival dates
+        $transferDate = Carbon::today();
+    
+        // Loop through each item and copy it to the Purchase table
+        foreach ($tempInvs as $tempInv) {
+            // Retrieve the associated Purchase model
+            $purchase = Purchase::findOrFail($tempInv->purchase_id);
+    
+            // Update the item_stock in the Purchase table
+            $purchase->item_stock -= $tempInv->quantity; // Subtract quantity from item_stock
+            $purchase->save();
+    
+            // Create a new Purchase record
+            Purchase::create([
+                'user_id' => $tempInv->user_id,
+                'item_name' => $tempInv->item_name,
+                'item_image' => $purchase->item_image, // Retrieve item_image from the associated Purchase model
+                'item_price' => $tempInv->item_price, // Use item_price from TempInv
+                'item_stock' => $tempInv->quantity, // Set item_stock as the quantity
+                'expiry_date' => $tempInv->expiry_date,
+                'item_description' => $tempInv->item_description,
+                'coffee_type' => $tempInv->coffee_type,
+                'branch' => $tempInv->branch,
+                'production_date' => $tempInv->production_date,
+                'transfer_date' => $transferDate,
+                'requested_by' => $currentUserBranch,
+                'transfer_status' => 1,
+                // Add other fields as needed
+            ]);
+    
+            // Delete the item from TempInv
+            $tempInv->delete();
+        }
+    
+        // Redirect back or to a specific page
+        return redirect()->back()->with('success', 'Request sent successfully');
+    }    
+
+    // Controller function for approving transfer status
+    public function approveTransferStatus($purchaseId)
+    {
+        // Find the purchase record
+        $purchase = Purchase::findOrFail($purchaseId);
+    
+        // Calculate the arrival date (2 days after the transfer date)
+        $arrivalDate = Carbon::parse($purchase->transfer_date)->addDays(2);
+    
+        // Update the purchase record
+        $purchase->arrival_date = $arrivalDate;
+        $purchase->transfer_status = 2; // Set transfer_status to 2 (approved)
+        $purchase->branch = $purchase->requested_by; // Set branch to requested_by
+    
+        // Save the changes
+        $purchase->save();
+    
+        // Redirect back or to a specific page
+        return redirect()->back()->with('success', 'Transfer status approved successfully');
+    }
+
+    // Controller function for rejecting transfer status
+    public function rejectTransferStatus($purchaseId)
+    {
+        // Find the purchase record
+        $purchase = Purchase::findOrFail($purchaseId);
+    
+        // Retrieve the item stock
+        $itemStock = $purchase->item_stock;
+    
+        // Find another item with the same attributes to transfer the stock to
+        $replacementItem = Purchase::where('item_name', $purchase->item_name)
+            ->where('item_price', $purchase->item_price)
+            ->where('item_image', $purchase->item_image)
+            ->where('branch', $purchase->branch)
+            ->where('item_description', $purchase->item_description)
+            ->where('coffee_type', $purchase->coffee_type)
+            ->where('production_date', $purchase->production_date)
+            ->where('expiry_date', $purchase->expiry_date)
+            ->where('transfer_status', 0) // Only consider items with transfer_status = 0
+            ->first();
+    
+        // If no replacement item is found, you may handle this case accordingly
+    
+        // Add the rejected item's stock to the replacement item
+        if ($replacementItem) {
+            $replacementItem->item_stock += $itemStock;
+            $replacementItem->save();
+        }
+    
+        // Delete the rejected item
+        $purchase->delete();
+    
+        // Redirect back or to a specific page
+        return redirect()->back()->with('success', 'Transfer status rejected successfully');
+    }
+
+    public function markReceived($purchaseId)
+    {
+        // Find the purchase record
+        $purchase = Purchase::findOrFail($purchaseId);
+
+        // Update the transfer_status to 3 (received)
+        $purchase->transfer_status = 0;
+        $purchase->save();
+
+        // Redirect back or to a specific page
+        return redirect()->back()->with('success', 'Transfer status marked as received successfully');
+    }
 }

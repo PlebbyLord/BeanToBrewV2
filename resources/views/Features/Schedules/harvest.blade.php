@@ -32,11 +32,21 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="location">Select Location:</label>
+                    <select class="form-control" id="location" name="location">
+                        <option value="Farm 1">Farm 1</option>
+                        <option value="Farm 2">Farm 2</option>
+                        <option value="Farm 3">Farm 3</option>
+                        <option value="Farm 4">Farm 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="calendar"><strong>Select Date:</strong></label>
                     <div id="calendar"></div>
                     <input type="hidden" id="selectedDate" name="calendar">
                 </div>
-                <div id="bestHarvestYear"></div> <!-- Display the best harvest year here -->
+                <div id="bestHarvestYear" class="text-center" style="font-weight: bold; font-size: large;">
+                </div>                              
                 <button type="submit" class="btn btn-primary">Save</button>
             </form>
         </div>

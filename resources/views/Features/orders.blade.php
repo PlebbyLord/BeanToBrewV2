@@ -95,8 +95,15 @@
                                     <div class="col-md-1">
                                         <label for="delivery_status" style="margin-left: 70px;" class="col-form-label delivery-status">
                                             {{ $cart->delivery_status == 1 ? 'Preparing to Ship' : ($cart->delivery_status == 2 ? 'Out For Delivery' : 'Delivered') }}
+                                            @if ($cart->delivery_status == 1 && $cart->orders->first()->shipping_option == 1)
+                                                <br>
+                                                <small>Expect delivery at {{ \Carbon\Carbon::parse($cart->orders->first()->created_at)->addDays(3)->format('F j') }} - {{ \Carbon\Carbon::parse($cart->orders->first()->created_at)->addDays(5)->format('j') }}</small>
+                                            @elseif ($cart->delivery_status == 1 && $cart->orders->first()->shipping_option == 2)
+                                                <br>
+                                                <small>Expect delivery at {{ \Carbon\Carbon::parse($cart->orders->first()->created_at)->addDays(1)->format('F j') }} - {{ \Carbon\Carbon::parse($cart->orders->first()->created_at)->addDays(2)->format('j') }}</small>
+                                            @endif
                                         </label>
-                                    </div>
+                                    </div>                                    
                                     <div class="col-md-5">
                                         <div class="d-flex justify-content-start align-items-center" style="margin-top: 0px;">
                                             @if ($cart->delivery_status == 2 && !$cart->is_received)

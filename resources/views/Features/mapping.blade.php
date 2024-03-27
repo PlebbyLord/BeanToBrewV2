@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             @auth
-                @if(auth()->user()->email == 'beantobrew24@gmail.com')
+                @if(auth()->user()->role == 2)
                     <a href="{{ route('features.mappingsave') }}" class="btn btn-primary" style="width: 850px; height: 40px;">Add Location</a> <!-- Adjusted width and height -->
                 @endif
             @endauth

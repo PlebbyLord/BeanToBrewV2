@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Mail\DeliveryConfirmation;
 use App\Models\Cart;
+use App\Models\Cashier;
 use App\Models\Orders;
+use App\Models\Purchase;
 use App\Models\Sales;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SalesController extends Controller
@@ -97,8 +101,6 @@ class SalesController extends Controller
         return redirect()->back()->with('success', 'Delivery status updated successfully and email dispatched.');
     }
     
-    
-
     public function pending()
     {
         $orders = Orders::all();
@@ -106,4 +108,60 @@ class SalesController extends Controller
         // Pass the data to the view and return it
         return view('Features.pending', compact('orders'));
     }
+
+    public function stats()
+    {
+        try {
+            // Define sales data manually for each year
+            $salesData = [];
+            $startYear = 2022;
+            $endYear = 2035;
+
+            // Initial sales value
+            $initialSales = 15000;
+
+            // Calculate projected sales based on a growth rate
+            $growthRate = 0.05;
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                $salesData[] = [
+                    'Year' => $year,
+                    'Sales' => $initialSales,
+                    'Projected_Sales' => $initialSales * (1 + $growthRate) ** ($year - $startYear)
+                ];
+
+                // Update initial sales for the next year
+                $initialSales = $salesData[count($salesData) - 1]['Projected_Sales'];
+            }
+
+            // Return the view with the sales data
+            return view('Features.stats')->with('salesData', $salesData);
+        } catch (Exception $e) {
+            Log::error('Failed to generate sales data: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to generate sales data: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function online()
+    {
+        $orders = Orders::all();
+    
+        // Pass the data to the view and return it
+        return view('Features.onlinesales', compact('orders'));
+    }
+
+    public function onsite()
+    {
+        // Retrieve all cashiers
+        $cashiers = Cashier::all();
+        
+        // Retrieve all purchase IDs from the cashiers table
+        $purchaseIds = $cashiers->pluck('purchase_id');
+        
+        // Retrieve all item images from the purchases table using the purchase IDs
+        $itemImages = Purchase::whereIn('id', $purchaseIds)->pluck('item_image', 'id');
+        
+        // Pass the data to the view
+        return view('Features.onsitesales', compact('cashiers', 'itemImages'));
+    }    
+
 }

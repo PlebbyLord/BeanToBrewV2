@@ -15,8 +15,8 @@ class CheckUserRole
      */
     public function handle(Request $request, Closure $next)
     {
-        // Check if the user is authenticated and has the specified email
-        if (auth()->check() && auth()->user()->email == 'beantobrew24@gmail.com') {
+        // Check if the user is authenticated and has the specified role
+        if (auth()->check() && (auth()->user()->role == 1 || auth()->user()->role == 2)) {
             return $next($request);
         }
 

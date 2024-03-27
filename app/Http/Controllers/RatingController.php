@@ -97,4 +97,23 @@ class RatingController extends Controller
         return redirect()->route('features.orders')->with('success', 'Rating saved successfully.');
     }
     
+    public function hide($id)
+    {
+        // Find the comment by its ID
+        $comment = Rating::findOrFail($id);
+    
+        // Check if the current user is authorized to hide the comment
+        if (auth()->check() && auth()->user()->role == 2) {
+            // Change the comment status to 1
+            $comment->comment_status = 1;
+            $comment->save();
+    
+            // Optionally, you can redirect back or to any other route
+            return redirect()->back()->with('success', 'Comment status updated successfully.');
+        }
+    
+        // If the user is not authorized, redirect back with an error message
+        return redirect()->back()->with('error', 'Unauthorized.');
+    }
+    
 }

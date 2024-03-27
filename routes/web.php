@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MappingController;
+use App\Http\Controllers\SalesController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScheduleController;
@@ -34,6 +35,9 @@ Route::put('/orders/updateDeliveryStatus/{cartId}', [App\Http\Controllers\Orders
 Route::get('/rate/{cart_id}', [App\Http\Controllers\OrdersController::class, 'ratePage'])->name('features.rate');
 Route::post('/rate/save', [App\Http\Controllers\RatingController::class, 'save'])->name('rate.save');
 Route::get('mapping/getMappingData', [MappingController::class, 'getMappingData'])->name('mapping.getMappingData');
+Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+Route::post('/update-profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('update.profile');
+
 
 Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/schedule', [App\Http\Controllers\ScheduleController::class, 'index'])->name('features.schedule');
@@ -47,6 +51,8 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::post('/roast-schedule', [App\Http\Controllers\ScheduleController::class, 'RoastingSave'])->name('roast-schedule');
     Route::post('/sort-schedule', [App\Http\Controllers\ScheduleController::class, 'SortingSave'])->name('sort-schedule');
     Route::post('/prune-schedule', [App\Http\Controllers\ScheduleController::class, 'PruneSave'])->name('prune-schedule');
+    Route::post('/water-schedule', [App\Http\Controllers\ScheduleController::class, 'WateringSave'])->name('water-schedule');
+    Route::post('/weekly-schedule', [App\Http\Controllers\ScheduleController::class, 'WeeklyChecksSave'])->name('weekly-schedule');
     Route::post('/pesticide-schedule', [App\Http\Controllers\ScheduleController::class, 'PesticideSave'])->name('pesticide-schedule');
     Route::get('/get-batch-numbers', [ScheduleController::class,'getBatchNumbers'])->name('get-batch-numbers');
     Route::get('/harvest', [ScheduleController::class, 'harvest'])->name('harvest');
@@ -64,15 +70,34 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/pulp', [ScheduleController::class, 'pulp'])->name('pulp');
     Route::get('/roast', [ScheduleController::class, 'roast'])->name('roast');
     Route::get('/sort', [ScheduleController::class, 'sort'])->name('sort');
+    Route::get('/water', [ScheduleController::class, 'water'])->name('water');
+    Route::get('/weekly', [ScheduleController::class, 'weekly'])->name('weekly');
+    Route::get('/calendar', [ScheduleController::class, 'calendar'])->name('calendar');
     Route::get('/inventory', [App\Http\Controllers\InventoryController::class, 'index'])->name('features.inventory');
+    Route::get('/users', [App\Http\Controllers\UsersController::class, 'index'])->name('features.users');
+    Route::get('/cashier', [App\Http\Controllers\CashierController::class, 'index'])->name('features.cashier');
+    Route::post('/add-to-temp-cash', [App\Http\Controllers\CashierController::class, 'addToTempCash'])->name('addToTempCash');
+    Route::post('/cashier/change-quantity', [App\Http\Controllers\CashierController::class, 'changeQuantity'])->name('cashier.changeQuantity');
+    Route::post('/checkout', [App\Http\Controllers\CashierController::class, 'checkout'])->name('cashier.checkout');
+    Route::delete('/cashier/remove', [App\Http\Controllers\CashierController::class, 'remove'])->name('cashier.remove');
+    Route::post('/admin/store', [App\Http\Controllers\UsersController::class, 'storeAdmin'])->name('storeAdmin');
     Route::get('/sales', [App\Http\Controllers\SalesController::class, 'index'])->name('features.sales');
+    Route::get('/sales/online', [App\Http\Controllers\SalesController::class, 'online'])->name('features.onlinesales');
+    Route::get('/sales/onsite', [App\Http\Controllers\SalesController::class, 'onsite'])->name('features.onsitesales');
     Route::get('/sales/pending', [App\Http\Controllers\SalesController::class, 'pending'])->name('features.pending');
+    Route::get('/sales/stats', [App\Http\Controllers\SalesController::class, 'stats'])->name('features.stats');
     Route::post('/save-item', [App\Http\Controllers\PurchaseController::class, 'saveItem'])->name('save.item');
     Route::post('/deliver/{cartId}', [App\Http\Controllers\SalesController::class, 'DeliverSend'])->name('deliver.send');
     Route::get('/mappingsave', [App\Http\Controllers\MappingController::class, 'mappingsave'])->name('features.mappingsave');
     Route::post('/mapping/save', [App\Http\Controllers\MappingController::class, 'save'])->name('mapping.save');
-    Route::get('/transfer/{purchase_id}', [App\Http\Controllers\PurchaseController::class, 'transferPage'])->name('features.transfer');
-    Route::post('/transfer/item', [App\Http\Controllers\PurchaseController::class, 'transferItem'])->name('transfer.item');
-
+    Route::get('/transfer', [App\Http\Controllers\PurchaseController::class, 'transferPage'])->name('features.transfer');
+    Route::post('/add-to-temp-inv', [App\Http\Controllers\PurchaseController::class, 'addToTempInv'])->name('addToTempInv');
+    Route::post('/transfer/change-quantity', [App\Http\Controllers\PurchaseController::class, 'changeQuantity'])->name('transfer.changeQuantity');
+    Route::delete('/transfer/remove', [App\Http\Controllers\PurchaseController::class, 'remove'])->name('transfer.remove');
+    Route::post('/request', [App\Http\Controllers\PurchaseController::class, 'request'])->name('transfer.request');
+    Route::post('/approve-transfer/{purchase}', [App\Http\Controllers\PurchaseController::class,'approveTransferStatus'])->name('approveTransfer');
+    Route::post('/reject-transfer/{purchase}', [App\Http\Controllers\PurchaseController::class,'rejectTransferStatus'])->name('rejectTransfer');
+    Route::post('/mark-received/{purchase}', [App\Http\Controllers\PurchaseController::class, 'markReceived'])->name('markReceived');
+    Route::put('/comments/{id}/hide', [App\Http\Controllers\RatingController::class, 'hide'])->name('comments.hide');
 
 });

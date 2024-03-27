@@ -7,6 +7,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5>History</h5>
             <a href="{{ route('completed') }}" class="btn btn-primary">Completed Schedules</a>
+            <a href="{{ route('calendar') }}" class="btn btn-primary">Calendar</a>
         </div>               
         <div class="card-body">
             <div class="table-responsive">
@@ -14,6 +15,8 @@
                     <thead>
                         <tr>
                             <th>Coffee Type</th>
+                            <th>Coffee Age</th>
+                            <th>Farm Location</th>
                             <th>Batch Number</th>
                             <th>Date Set</th>
                             <th>Schedule Type</th>
@@ -25,18 +28,22 @@
                         @foreach($schedules as $schedule)
                         <tr>
                             <td>{{ $schedule->coffee_species }}</td>
+                            <td>{{ $schedule->age }}</td>
+                            <td>{{ $schedule->location }}</td>
                             <td>{{ $schedule->batch_number }}</td>
                             <td>{{ $schedule->Date_Set }}</td>
                             <td>{{ $schedule->Schedule_Type }}</td>
                             <td>
-                                @if($schedule->progress_status == 0)
+                                @if($schedule->progress_status == 0&& $schedule->Date_Set > now())
                                     Waiting
+                                @elseif($schedule->progress_status == 0 && $schedule->Date_Set < now()) 
+                                    Delayed
                                 @elseif($schedule->progress_status == 1)
-                                    In Progress
+                                    In Progress   
                                 @endif
                             </td>
                             <td>                                
-                                @if($schedule->progress_status == 0)
+                                @if($schedule->progress_status == 0 && $schedule->Date_Set <= now())
                                 <form action="{{ route('schedStart', $schedule->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-danger">Start Task</button>

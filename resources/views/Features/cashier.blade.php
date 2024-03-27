@@ -45,27 +45,28 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        Items in Other Branches
+                        Available Items
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
-                            @foreach($otherBranchItems as $item)
-                                @if($item->transfer_status != 1)
+                            @foreach($purchases as $purchase)
+                                @if($purchase->branch == auth()->user()->branch)
                                     <li class="list-group-item">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . $item->item_image) }}" alt="{{ $item->item_name }}" style="max-width: 70px;" class="me-3">
+                                            <img src="{{ asset('storage/' . $purchase->item_image) }}" alt="{{ $purchase->item_name }}" style="max-width: 70px;" class="me-3">
                                             <div>
-                                                <div>{{ $item->item_name }}</div>
-                                                <div>Stock: {{ $item->item_stock }}</div>
-                                                <div>Price /kilo: {{ $item->item_price }}</div>
+                                                <div>{{ $purchase->item_name }}</div>
+                                                <div>Stock: {{ $purchase->item_stock }}</div>
+                                                <div>Price /kilo: {{ $purchase->item_price }}</div>
                                             </div>
                                             <div class="ms-auto">
-                                                <form action="{{ route('addToTempInv') }}" method="POST">
+                                                <!-- Add button here -->
+                                                <form action="{{ route('addToTempCash') }}" method="POST">
                                                     @csrf
-                                                    <input type="hidden" name="purchase_id" value="{{ $item->id }}">
-                                                    <input type="hidden" name="item_name" value="{{ $item->item_name }}">
-                                                    <input type="hidden" name="item_image" value="{{ asset('storage/' . $item->item_image) }}">
-                                                    <input type="hidden" name="item_price" value="{{ $item->item_price }}">
+                                                    <input type="hidden" name="purchase_id" value="{{ $purchase->id }}">
+                                                    <input type="hidden" name="item_name" value="{{ $purchase->item_name }}">
+                                                    <input type="hidden" name="item_image" value="{{ asset('storage/' . $purchase->item_image) }}">
+                                                    <input type="hidden" name="item_price" value="{{ $purchase->item_price }}">
                                                     <button type="submit" class="btn btn-primary">Add</button>
                                                 </form>
                                             </div>
@@ -74,50 +75,59 @@
                                 @endif
                             @endforeach
                         </ul>
-                    </div>           
+                    </div>                
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        Items For Transfer
+                        Items for Checkout
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
-                            @foreach($tempInvs as $tempInv)
+                            @php
+                                $totalSale = 0;
+                            @endphp
+                            @foreach($tempCashes as $tempCash)
+                                @php
+                                    $itemSubtotal = $tempCash->item_price * $tempCash->quantity;
+                                    $totalSale += $itemSubtotal;
+                                @endphp
                                 <li class="list-group-item">
                                     <div class="d-flex align-items-center">
-                                        <img src="{{ $tempInv->item_image }}" alt="{{ $tempInv->item_name }}" style="max-width: 70px;" class="me-3">
+                                        <img src="{{ $tempCash->item_image }}" alt="{{ $tempCash->item_name }}" style="max-width: 70px;" class="me-3">
                                         <div>
-                                            <div>{{ $tempInv->item_name }}</div>
-                                            <div>Quantity: {{ $tempInv->quantity }}</div>
+                                            <div>{{ $tempCash->item_name }}</div>
+                                            <div>Price /kilo: {{ $tempCash->item_price }}</div>
+                                            <div>Quantity: {{ $tempCash->quantity }}</div>
+                                            <div>Item Subtotal: ₱{{ number_format($itemSubtotal, 2) }}</div>
                                         </div>
                                         <div class="ms-auto">
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quantityModal{{ $tempInv->id }}">Change Quantity</button>
-                                            <form action="{{ route('transfer.remove') }}" method="POST" style="display: inline-block;">
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quantityModal{{ $tempCash->id }}">Change Quantity</button>
+                                            <form action="{{ route('cashier.remove') }}" method="POST" style="display: inline-block;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <input type="hidden" name="temp_inv_id" value="{{ $tempInv->id }}">
+                                                <input type="hidden" name="temp_cash_id" value="{{ $tempCash->id }}">
                                                 <button type="submit" class="btn btn-danger">Remove</button>
                                             </form>
                                         </div>
                                     </div>
                                 </li>
                                 <!-- Quantity Modal -->
-                                <div class="modal fade" id="quantityModal{{ $tempInv->id }}" tabindex="-1" aria-labelledby="quantityModalLabel{{ $tempInv->id }}" aria-hidden="true">
+                                <div class="modal fade" id="quantityModal{{ $tempCash->id }}" tabindex="-1" aria-labelledby="quantityModalLabel{{ $tempCash->id }}" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="quantityModalLabel{{ $tempInv->id }}">Change Quantity</h5>
+                                                <h5 class="modal-title" id="quantityModalLabel{{ $tempCash->id }}">Change Quantity</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <!-- Your form to change quantity -->
-                                                <form action="{{ route('transfer.changeQuantity') }}" method="POST">
+                                                <form action="{{ route('cashier.changeQuantity') }}" method="POST">
                                                     @csrf
-                                                    <input type="hidden" name="temp_inv_id" value="{{ $tempInv->id }}">
+                                                    <input type="hidden" name="temp_cash_id" value="{{ $tempCash->id }}">
                                                     <label for="quantity">Quantity:</label>
-                                                    <input type="number" id="quantity" name="quantity" value="{{ $tempInv->quantity }}">
+                                                    <input type="number" id="quantity" name="quantity" value="{{ $tempCash->quantity }}">
                                                     <button type="submit" class="btn btn-primary">Save</button>
                                                 </form>
                                             </div>
@@ -130,18 +140,44 @@
                     <div class="card-footer">
                         <div class="row">
                             <div class="col">
+                                <div class="text-start">
+                                    <strong>Total Sale: ₱{{ number_format($totalSale, 2) }}</strong>
+                                </div>
+                            </div>
+                            <div class="col">
                                 <div class="text-end">
-                                    <form action="{{ route('transfer.request') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-success">Send Request</button>
-                                    </form>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#getChangeModal">
+                                        Checkout
+                                    </button>
+            
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="getChangeModal" tabindex="-1" aria-labelledby="getChangeModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="getChangeModalLabel">Checkout</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="{{ route('cashier.checkout') }}" method="POST">
+                                                        @csrf
+                                                        <label for="changeAmount">Enter the amount paid by the buyer:</label>
+                                                        <input type="number" id="changeAmount" name="change" class="form-control" required>
+                                                        <!-- Pass the total sale to the controller -->
+                                                        <input type="hidden" name="total_sale" value="{{ $totalSale }}">
+                                                        <button type="submit" class="btn btn-primary mt-3">Checkout</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>                    
                 </div>
-            </div>
-                                   
+            </div>                            
         </div>
     </div>
 </div>
@@ -154,7 +190,7 @@
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
             if (checkbox.id === "all" && checkbox.checked) {
-                window.location.href = '{{ route("features.transfer") }}';
+                window.location.href = '{{ route("features.cashier") }}';
             } else {
                 const selectedTypes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
                 const urlParams = new URLSearchParams(window.location.search);

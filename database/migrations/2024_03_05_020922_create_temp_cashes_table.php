@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('temp_cashes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('coffee_species');
-            $table->tinyInteger('age')->default(0)->nullable();
-            $table->string('location');
-            $table->integer('batch_number');
-            $table->date('Date_Set');
-            $table->string('Schedule_Type');
-            $table->tinyInteger('progress_status')->default(0);
+            $table->unsignedBigInteger('purchase_id');
+            $table->string('item_name');
+            $table->string('item_image');
+            $table->decimal('item_price', 10, 2);
+            $table->integer('quantity')->nullable();
             $table->timestamps();
+
+            $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('cascade');
         });
     }
 
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('temp_cashes');
     }
 };
