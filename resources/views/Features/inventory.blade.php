@@ -119,7 +119,7 @@
                     <tbody>
                         @foreach($purchases as $purchase)
                         <tr>
-                            <td><img src="{{ asset('storage/' . $purchase->item_image) }}" alt="{{ $purchase->item_name }}" style="max-width: 75px;"></td>
+                            <td><img src="{{ asset('storage/' . $purchase->item_image) }}" alt="{{ $purchase->item_name }}" style="max-width: 75px; border: 1px solid black;"></td>
                             <td>{{ $purchase->item_name }}</td>
                             <td>{{ $purchase->coffee_type }}</td>
                             <td>{{ $purchase->branch }}</td>

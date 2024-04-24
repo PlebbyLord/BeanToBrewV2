@@ -59,7 +59,7 @@
                                 <div class="row mb-3 align-items-center">
                                     <div class="col-md-1">
                                         <img src="{{ asset('storage/' . $cart->item_image) }}" alt="{{ $cart->item_name }}"
-                                            class="img-fluid" style="max-width: 75px; max-height: 75px; margin-left: 10px;">
+                                            class="img-fluid" style="max-width: 75px; max-height: 75px; margin-left: 10px; border: 1px solid black;">
                                     </div>
                                     <div class="col-md-1">
                                         <label for="item_name" style="margin-left: 1px;" class="col-form-label">{{ $cart->item_name }}</label>

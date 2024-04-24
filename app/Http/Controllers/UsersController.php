@@ -17,14 +17,15 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
-        // Retrieve all users
-        $users = User::all();
+        // Retrieve users with role = 0
+        $users = User::where('role', 0)->get();
+    
+        // Retrieve all branches (assuming Mapping is the model for branches)
         $branches = Mapping::all();
-
-        // Pass users data to the view
+    
+        // Pass filtered users data and branches data to the view
         return view('features.users', compact('users', 'branches'));
     }
-    
 
     /**
      * Show the form for creating a new resource.
@@ -101,5 +102,17 @@ class UsersController extends Controller
 
         // Redirect back to the previous page with a success message
         return redirect()->back()->with('success', 'Admin user created successfully!');
+    }
+
+    public function admins(Request $request)
+    {
+        // Retrieve users with roles 1 and 2
+        $users = User::whereIn('role', [1, 2])->get();
+    
+        // Retrieve all branches (assuming Mapping is the model for branches)
+        $branches = Mapping::all();
+    
+        // Pass filtered users data and branches data to the view
+        return view('features.admins', compact('users', 'branches'));
     }
 }

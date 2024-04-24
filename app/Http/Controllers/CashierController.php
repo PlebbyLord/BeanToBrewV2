@@ -6,6 +6,9 @@ use App\Models\Cashier;
 use App\Models\Purchase;
 use App\Models\TempCash;
 use Illuminate\Http\Request;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Illuminate\Support\Facades\Storage;
 
 class CashierController extends Controller
 {
@@ -168,6 +171,24 @@ class CashierController extends Controller
     
         // Retrieve all items from the TempCash table
         $tempCashes = TempCash::where('user_id', auth()->id())->get();
+
+        // Configure Dompdf options
+        $options = new Options();
+        $options->set('defaultFont', 'Helvetica');
+        $dompdf = new Dompdf($options);
+    
+        // Begin PDF generation
+        $view = view('components.receipt', compact('tempCashes', 'totalSale', 'paidAmount', 'change'))->render();
+        $dompdf->loadHtml($view);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+    
+        // Output the generated PDF
+        $pdfOutput = $dompdf->output();
+    
+        // Save PDF to storage
+        $pdfPath = 'public/receipts/receipt_' . time() . '.pdf'; // Define storage path
+        Storage::put($pdfPath, $pdfOutput); // Store PDF in the storage
     
         // Loop through each item and copy it to the Cashier table
         foreach ($tempCashes as $tempCash) {
@@ -189,9 +210,9 @@ class CashierController extends Controller
         // Delete all items from the TempCash table
         TempCash::where('user_id', auth()->id())->delete();
     
-        // Redirect back or to a specific page
+        // Redirect back or to a specific page with success message
         return redirect()->back()->with('success', 'Items checked out successfully. Change: ₱' . number_format($change, 2));
-    }    
+    }
 
     public function remove(Request $request)
     {

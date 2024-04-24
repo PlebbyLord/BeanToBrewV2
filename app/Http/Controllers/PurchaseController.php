@@ -102,16 +102,32 @@ class PurchaseController extends Controller
     
     public function transferPage(Request $request)
     {
-        // Retrieve the current user's branch
         $currentUserBranch = auth()->user()->branch;
+
+        // Check if filter parameters are provided in the request
+        if ($request->filled('coffee_type')) {
+            // Validate the request
+            $request->validate([
+                'coffee_type' => 'required|array', // Ensure coffee_type is an array
+                'coffee_type.*' => 'in:green,roasted,grinded', // Validate each coffee type
+            ]);
     
-        // Retrieve items from other branches
-        $otherBranchItems = Purchase::where('branch', '!=', $currentUserBranch)->get();
+            // Extract the selected coffee types from the request
+            $selectedCoffeeTypes = $request->input('coffee_type');
+    
+            // Query the purchases table for items from other branches based on selected coffee types
+            $otherBranchItems = Purchase::whereIn('coffee_type', $selectedCoffeeTypes)
+                ->where('branch', '!=', $currentUserBranch)
+                ->get();
+        } else {
+            // No filter parameters provided, so get all items from other branches
+            $otherBranchItems = Purchase::where('branch', '!=', $currentUserBranch)->get();
+        }
     
         // Retrieve items from the temp_invs table
         $tempInvs = TempInv::where('user_id', auth()->id())->get();
     
-        // Pass the other branch items and temp inv items to the view
+        // Pass the filtered or unfiltered other branch items and temp inv items to the view
         return view('features.transfer', ['otherBranchItems' => $otherBranchItems, 'tempInvs' => $tempInvs]);
     }
 

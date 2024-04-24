@@ -52,7 +52,7 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <img src="{{ asset('storage/' . $selectedItem->item_image) }}" alt="{{ $selectedItem->item_name }}" class="img-fluid">
-                            </div>                          
+                            </div>                            
                             <div class="col-md-8">
                                 <!-- Display item details -->
                                 <div class="row mb-3">

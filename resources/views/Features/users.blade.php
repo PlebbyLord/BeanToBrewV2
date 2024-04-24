@@ -5,104 +5,13 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
-                <h1>All Users</h1>
+                <h1>Users</h1>
                 @if(auth()->user()->role == 2)
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAdminModal">
-                    Add Admin
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="addAdminModalLabel">Add Admin</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="POST" action="{{ route('storeAdmin') }}">
-                                    @csrf
-
-                                    <!-- First Name -->
-                                    <div class="mb-3">
-                                        <label for="first_name" class="form-label">First Name</label>
-                                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name') }}" required>
-                                        @error('first_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Last Name -->
-                                    <div class="mb-3">
-                                        <label for="last_name" class="form-label">Last Name</label>
-                                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('last_name') }}" required>
-                                        @error('last_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Address -->
-                                    <div class="mb-3">
-                                        <label for="address" class="form-label">Address</label>
-                                        <input type="text" class="form-control" id="address" name="address" value="{{ old('address') }}" required>
-                                        @error('address')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Mobile Number -->
-                                    <div class="mb-3">
-                                        <label for="mobile_number" class="form-label">Mobile Number</label>
-                                        <input type="number" class="form-control" id="mobile_number" name="mobile_number" value="{{ old('mobile_number') }}" required>
-                                        @error('mobile_number')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>                                    
-
-                                    <!-- Email -->
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
-                                        @error('email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Branch -->
-                                    <div class="mb-3">
-                                        <label for="branch" class="form-label">Branch</label>
-                                        <select class="form-select" id="branch" name="branch" required>
-                                            @foreach($branches as $branch)
-                                                <option value="{{ $branch->name }}">{{ $branch->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('branch')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Password -->
-                                    <div class="mb-3">
-                                        <label for="password" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="password" name="password" required>
-                                        @error('password')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Confirm Password -->
-                                    <div class="mb-3">
-                                        <label for="password_confirmation" class="form-label">Confirm Password</label>
-                                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                <div class="d-flex justify-content-end mb-3"> <!-- Use flex utilities to align content to the end -->           
+                    <!-- Button to go to features.admins route -->
+                    <a href="{{ route('features.admins') }}" class="btn btn-success">Admins</a>
                 </div>
+
                 @endif
             </div>
         </div>
@@ -114,7 +23,6 @@
                         <th>Profile</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Branch</th>
                         <th>Role</th>
                     </tr>
                 </thead>
@@ -135,7 +43,6 @@
                         </td>
                         <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                         <td>{{ $user->email }}</td>
-                        <td>{{ $user->branch }}</td>
                         <td>
                             @if($user->role == 0)
                             Customer

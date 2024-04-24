@@ -21,6 +21,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 Auth::routes();
 Route::get('/purchase', [App\Http\Controllers\PurchaseController::class, 'index'])->name('features.purchase');
+Route::get('/terms', [App\Http\Controllers\HomeController::class, 'terms'])->name('terms');
 Route::get('/mapping', [App\Http\Controllers\MappingController::class, 'index'])->name('features.mapping');
 Route::get('/viewitem/{id}', [App\Http\Controllers\ViewItemController::class, 'showItem'])->name('viewitem.showItem');
 Route::get('/viewitem', [App\Http\Controllers\ViewItemController::class, 'showItem'])->name('viewitem.showItem.query');
@@ -75,6 +76,7 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/calendar', [ScheduleController::class, 'calendar'])->name('calendar');
     Route::get('/inventory', [App\Http\Controllers\InventoryController::class, 'index'])->name('features.inventory');
     Route::get('/users', [App\Http\Controllers\UsersController::class, 'index'])->name('features.users');
+    Route::get('/users/admins', [App\Http\Controllers\UsersController::class, 'admins'])->name('features.admins');
     Route::get('/cashier', [App\Http\Controllers\CashierController::class, 'index'])->name('features.cashier');
     Route::post('/add-to-temp-cash', [App\Http\Controllers\CashierController::class, 'addToTempCash'])->name('addToTempCash');
     Route::post('/cashier/change-quantity', [App\Http\Controllers\CashierController::class, 'changeQuantity'])->name('cashier.changeQuantity');
@@ -99,5 +101,7 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::post('/reject-transfer/{purchase}', [App\Http\Controllers\PurchaseController::class,'rejectTransferStatus'])->name('rejectTransfer');
     Route::post('/mark-received/{purchase}', [App\Http\Controllers\PurchaseController::class, 'markReceived'])->name('markReceived');
     Route::put('/comments/{id}/hide', [App\Http\Controllers\RatingController::class, 'hide'])->name('comments.hide');
+    Route::get('/export-onsite-sales', [SalesController::class, 'exportonsite'])->name('export.onsite.sales');
+    Route::get('/export/online-sales', [SalesController::class, 'exportOnlineSales'])->name('export.online.sales');
 
 });

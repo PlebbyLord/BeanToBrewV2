@@ -10,17 +10,6 @@
     <title>Bean to Brew</title>
 </head>
 <body>
-    <style>
-        #filterCard {
-            position: fixed;
-            top: 10;
-            left: 0;
-            width: 200px; /* Adjust width as needed */
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-    </style>
     <div id="filterCard">
         <form id="filterForm">
             <div>
@@ -37,12 +26,14 @@
         </form>
     </div>
 
-    <div id="mainContent" style="margin-left: 280px; /* Adjust margin-left to accommodate the filter card width */">
+    <div id="mainContent" style="margin-left: 240px; /* Adjust margin-left to accommodate the filter card width */">
         <div id="itemsContainer">
             @foreach ($userItems->take(1) as $buy)
                 <div class="item {{ $buy->coffee_type }}">
                     <div class="col" style="margin-bottom: 20px;"> 
-                        <p class="Name text-center" style="font-size: 18px; text-decoration: underline;">Bean To Brew Shop</p>
+                        <p class="Name text-center" style="font-size: 40px; text-decoration: underline; font-weight: bold; margin-left: 470px; color: rgb(0, 0, 0); margin-top: 50px; font-family: 'Monotype Corsiva', cursive; background-color: rgba(255, 255, 255, 0.8); padding: 10px; display: inline;">
+                            Bean To Brew Shop
+                        </p>                                                                                   
                         @include("components.cardcolumn", ['buy' => $buy])
                     </div>
                 </div>
