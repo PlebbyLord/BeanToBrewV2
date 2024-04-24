@@ -39,7 +39,7 @@
                         <tr>
                             <td>{{ $order->id }}</td>
                             <td>{{ $order->cart_id }}</td>
-                            <td><img src="{{ asset('storage/' . $order->cart->item_image) }}" alt="{{ $order->cart->item_image }}" style="max-width: 75px;"></td>
+                            <td><img src="{{ asset('storage/' . $order->cart->item_image) }}" alt="{{ $order->cart->item_image }}" style="max-width: 75px; border: 1px solid black;"></td>
                             <td>{{ $order->cart->item_name }}</td>
                             <td>{{ $order->cart->quantity }}</td>
                             <td>{{ $order->name }}</td>

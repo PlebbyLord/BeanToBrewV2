@@ -54,7 +54,7 @@
                                 @foreach ($companyCarts as $cart)
                                     <div class="row mb-3 align-items-center">
                                         <div class="col-md-1">
-                                            <img src="{{ asset('storage/' . $cart->item_image) }}" alt="{{ $cart->item_name }}" class="img-fluid" style="max-width: 75px; max-height: 75px; margin-left: 10px;">
+                                            <img src="{{ asset('storage/' . $cart->item_image) }}" alt="{{ $cart->item_name }}" class="img-fluid" style="max-width: 75px; max-height: 75px; margin-left: 10px; border: 1px solid black;">
                                         </div>
                                         <div class="col-md-3">
                                             <label for="item_name" style="margin-left: 30px;" class="col-form-label">{{ $cart->item_name }}</label>
@@ -78,7 +78,7 @@
                     </div>
                 @endforeach
                 <div class="col-md-10 mb-4">
-                    <div class="card text-gray bg-light mb-0" style="max-width: 100%; min-height: 75px;">
+                    <div class="card text-gray mb-0" style="max-width: 100%; min-height: 75px; background-color: rgb(137, 211, 225); border: 2px solid black;">
                         <div class="row mb-3 align-items-center">
                             <div class="col-md-12">
                                 <div class="d-flex justify-content-center" style="margin: 2rem auto auto auto;">
@@ -110,7 +110,7 @@
                 </div>
                 
                 <div class="col-md-10 mb-4">
-                    <div class="card text-black bg-light mb-0" style="max-width: 72rem; min-height: 75px;">
+                    <div class="card text-black mb-0" style="max-width: 72rem; min-height: 75px; background-color: rgb(137, 211, 225); border: 2px solid black;">
                         <div class="row mb-3 align-items-center">
                             <div class="col-md-12">
                                 <div class="d-flex justify-content-end" style="margin: 2rem auto auto auto;">
@@ -127,7 +127,7 @@
                     </div>
                 </div>
                 <div class="col-md-10 mb-4">
-                    <div class="card text-gray bg-light mb-0" style="max-width: 72rem; min-height: 50px;">
+                    <div class="card text-gray mb-0" style="max-width: 72rem; min-height: 50px; background-color: rgb(137, 211, 225); border: 2px solid black;">
                         <div class="row mb-3 align-items-center">
                             <div class="col-md-12">
                                 <div class="d-flex flex-column" style="margin: 1rem auto auto auto;">

@@ -11,17 +11,6 @@
     {{ session('success') }}
 </div>
 @endif
-<style>
-    #filterCard {
-        position: fixed;
-        top: 100px;
-        left: 50px;
-        width: 200px; /* Adjust width as needed */
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-</style>
 
 <div id="filterCard">
     <form id="filterForm">
@@ -53,11 +42,12 @@
                                 @if($item->transfer_status != 1)
                                     <li class="list-group-item">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . $item->item_image) }}" alt="{{ $item->item_name }}" style="max-width: 70px;" class="me-3">
+                                            <img src="{{ asset('storage/' . $item->item_image) }}" alt="{{ $item->item_name }}" style="max-width: 70px; border: 1px solid black;" class="me-3">
                                             <div>
                                                 <div>{{ $item->item_name }}</div>
                                                 <div>Stock: {{ $item->item_stock }}</div>
                                                 <div>Price /kilo: {{ $item->item_price }}</div>
+                                                <div>Branch: {{ $item->branch }}</div>
                                             </div>
                                             <div class="ms-auto">
                                                 <form action="{{ route('addToTempInv') }}" method="POST">
@@ -66,6 +56,7 @@
                                                     <input type="hidden" name="item_name" value="{{ $item->item_name }}">
                                                     <input type="hidden" name="item_image" value="{{ asset('storage/' . $item->item_image) }}">
                                                     <input type="hidden" name="item_price" value="{{ $item->item_price }}">
+                                                    <input type="hidden" name="branch" value="{{ $item->branch }}">
                                                     <button type="submit" class="btn btn-primary">Add</button>
                                                 </form>
                                             </div>
@@ -87,7 +78,7 @@
                             @foreach($tempInvs as $tempInv)
                                 <li class="list-group-item">
                                     <div class="d-flex align-items-center">
-                                        <img src="{{ $tempInv->item_image }}" alt="{{ $tempInv->item_name }}" style="max-width: 70px;" class="me-3">
+                                        <img src="{{ $tempInv->item_image }}" alt="{{ $tempInv->item_name }}" style="max-width: 70px; border: 1px solid black;" class="me-3">
                                         <div>
                                             <div>{{ $tempInv->item_name }}</div>
                                             <div>Quantity: {{ $tempInv->quantity }}</div>

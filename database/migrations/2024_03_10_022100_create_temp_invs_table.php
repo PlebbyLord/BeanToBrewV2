@@ -28,7 +28,7 @@ return new class extends Migration
             $table->date('arrival_date')->nullable();
             $table->string('requested_by')->nullable();;
             $table->tinyInteger('transfer_status')->default(0);
-            $table->string('item_description', 255);
+            $table->longText('item_description');
             $table->timestamps();
 
             $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('cascade');

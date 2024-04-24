@@ -1,7 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-
+<style>
+        .card-body {
+            background-color: rgb(252, 252, 252);
+            border: 1px solid rgb(0, 0, 0);
+        }
+        .card-header {
+            background-color: rgb(252, 252, 252);   
+            border: 1px solid rgb(0, 0, 0);
+        }
+        .card-footer {
+            background-color: rgb(252, 252, 252);   
+            border: 1px solid rgb(0, 0, 0);
+        }
+</style>
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -21,7 +34,7 @@
                 <div class="card-header">
                     {{ $mapping->name }} Branch
                 </div>
-                <div class="card-body" style="height: 300px;">
+                <div class="card-body" style="height: 350px;">
                     <div class="row">
                         <div class="col-md-6">
                             <div id="map-{{ $mapping->id }}" style="height: 300px; width: 400px;"></div>

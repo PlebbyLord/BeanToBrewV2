@@ -17,7 +17,7 @@
                     <!-- Left column for name and coffee beans -->
                     <div class="col-md-4">
                         <div class="mb-2">
-                            <img src="{{ asset('storage/' . $cart->item_image) }}" alt="{{ $cart->item_name }}" style="max-width: 100px;" class="img-fluid">
+                            <img src="{{ asset('storage/' . $cart->item_image) }}" alt="{{ $cart->item_name }}" style="max-width: 100px; border: 1px solid black;" class="img-fluid">
                         </div>
                     </div>
                     <!-- Right column for the image -->

@@ -48,7 +48,7 @@
                                     <div class="col-md-2">
                                         <img src="{{ asset('storage/' . $cart->item_image) }}"
                                             alt="{{ $cart->item_name }}" class="img-fluid"
-                                            style="max-width: 75px; max-height: 75px;">
+                                            style="max-width: 75px; max-height: 75px; border: 1px solid black;">
                                     </div>
                                     <div class="col-md-2">
                                         <label for="item_name" style="margin-left: -100px"

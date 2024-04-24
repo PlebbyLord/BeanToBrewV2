@@ -1,10 +1,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+<style>
+    .fixed-height-card {
+        height: 445px; /* Set your desired fixed height here */
+        overflow: hidden; /* Hide overflow content if necessary */
+    }
+</style>
 <div class="container text-center">
     <div class="row">
         @foreach($userItems as $buy)
-            <div class="col card-column" style="margin-bottom: 10px;">
-                <div class="card" style="width: 10rem; cursor: pointer;">
+            <div class="col card-column" style="margin-bottom: 0px; margin-top: 20px;">
+                <div class="card fixed-height-card" style="width: 10rem; cursor: pointer;">
                     {{-- Make only the card content clickable --}}
                     <div class="card-body">
                         <a href="{{ route('viewitem.showItem.query', ['id' => $buy->id]) }}" style="text-decoration: none; color: inherit;">

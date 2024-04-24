@@ -2,26 +2,17 @@
 
 @section('content')
 @if(session('error'))
-<div style="color: red; display: flex; justify-content: center;">
+<div style="background-color: black; color: red; display: flex; justify-content: center; padding: 20px; font-size: 20px;">
     {{ session('error') }}
 </div>
 @endif
+
 @if(session('success'))
-<div style="color: green; display: flex; justify-content: center;">
+<div style="background-color: black; color: green; display: flex; justify-content: center; padding: 20px; font-size: 20px;">
     {{ session('success') }}
 </div>
 @endif
-<style>
-    #filterCard {
-        position: fixed;
-        top: 100px;
-        left: 50px;
-        width: 200px; /* Adjust width as needed */
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-</style>
+
 
 <div id="filterCard">
     <form id="filterForm">
@@ -53,7 +44,7 @@
                                 @if($purchase->branch == auth()->user()->branch)
                                     <li class="list-group-item">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . $purchase->item_image) }}" alt="{{ $purchase->item_name }}" style="max-width: 70px;" class="me-3">
+                                            <img src="{{ asset('storage/' . $purchase->item_image) }}" alt="{{ $purchase->item_name }}" style="max-width: 70px; border: 1px solid black;" class="me-3">
                                             <div>
                                                 <div>{{ $purchase->item_name }}</div>
                                                 <div>Stock: {{ $purchase->item_stock }}</div>
@@ -95,7 +86,7 @@
                                 @endphp
                                 <li class="list-group-item">
                                     <div class="d-flex align-items-center">
-                                        <img src="{{ $tempCash->item_image }}" alt="{{ $tempCash->item_name }}" style="max-width: 70px;" class="me-3">
+                                        <img src="{{ $tempCash->item_image }}" alt="{{ $tempCash->item_name }}" style="max-width: 70px; border: 1px solid black;" class="me-3">
                                         <div>
                                             <div>{{ $tempCash->item_name }}</div>
                                             <div>Price /kilo: {{ $tempCash->item_price }}</div>
