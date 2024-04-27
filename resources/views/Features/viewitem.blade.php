@@ -99,6 +99,10 @@
                                                         {{ __('Add To Cart') }}
                                                     </button>
                                                 @endif
+                                            @else
+                                                <a href="{{ route('login') }}" class="btn btn-primary">
+                                                    {{ __('Login to Order') }}
+                                                </a>
                                             @endauth      
                                         </div>
                                     @else

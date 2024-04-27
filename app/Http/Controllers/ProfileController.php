@@ -87,8 +87,9 @@ class ProfileController extends Controller
     
         // Handle profile picture upload if a new image is provided
         if ($request->hasFile('image1')) {
-            $imagePath = $request->file('image1')->store('profile_pictures', 'public');
-            $profile->profile_picture = $imagePath; // Update profile picture in profiles table
+            $imageFile = $request->file('image1');
+            $imagePath = $imageFile->move(public_path('storage/profile_pictures'), $imageFile->getClientOriginalName());
+            $profile->profile_picture = 'profile_pictures/' . $imageFile->getClientOriginalName(); // Update profile picture path in profiles table
             $profile->save(); // Save the profile after updating profile picture
         }
     
@@ -104,7 +105,6 @@ class ProfileController extends Controller
             // Redirect to the profile page with an info message
             return redirect()->route('profile')->with('info', 'No update occurred');
         }
-    }
+    }    
     
-
 }

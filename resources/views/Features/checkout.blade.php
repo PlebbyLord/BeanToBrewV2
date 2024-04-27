@@ -85,15 +85,15 @@
                                     <div class="mb-2 row align-items-center">
                                         <div class="col-md-3">
                                             <label for="name">Full Name</label>
-                                            <input type="text" name="name" class="form-control" required>
+                                            <input type="text" name="name" class="form-control" value="{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}" readonly>
                                         </div>
                                         <div class="col-md-3">
                                             <label for="number">Mobile Number</label>
-                                            <input type="number" name="number" pattern="(\+63|0)\d{3}[-\s]?\d{7}"  class="form-control" required>
+                                            <input type="number" name="number" pattern="(\+63|0)\d{3}[-\s]?\d{7}" class="form-control" value="{{ auth()->user()->mobile_number }}" required readonly>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="address">Address</label>
-                                            <input type="text" name="address" class="form-control" required>
+                                            <input type="text" name="address" class="form-control" value="{{ auth()->user()->address }}" required readonly>
                                         </div>
                                         <div class="col-md-12 mt-2 d-flex justify-content-center">
                                             <span class="badge badge-secondary text-dark" style="margin-right: 20px; font-size: 15px;">Payment Option:</span>
@@ -107,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>                
                 
                 <div class="col-md-10 mb-4">
                     <div class="card text-black mb-0" style="max-width: 72rem; min-height: 75px; background-color: rgb(137, 211, 225); border: 2px solid black;">
@@ -154,7 +154,7 @@
             </div>
         </div>
     </form>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
             // Handle form submission
@@ -172,34 +172,62 @@
     
             // Handle change event for each shipping option
             $('.shipping-option').on('change', function () {
-                var selectedValue = $(this).val();
-                var shippingFeeBadge = $(this).closest('.card').find('.shipping-fee-badge');
-    
-                if (selectedValue === '1') {
-                    shippingFeeBadge.text('Shipping Fee: ₱100.00');
-                } else if (selectedValue === '2') {
-                    shippingFeeBadge.text('Shipping Fee: ₱150.00');
-                }
-                // Update the total shipping cost based on the selected option
-                updateTotalShippingCost();
+                // Update the shipping fee based on the selected option and quantity
+                updateShippingFee();
             });
     
-            // Function to update the total shipping cost
-            function updateTotalShippingCost() {
-                // Initialize total shipping cost
-                var totalShippingCost = 0.00;
+            // Function to update the shipping fee based on the selected option and quantity
+            function updateShippingFee() {
+            var baseFeeStandard = 100.00; // Base fee for standard shipping
+            var baseFeeExpress = 150.00; // Base fee for express shipping
+            var incrementStandard = 25.00; // Increment amount for standard shipping per 10 items
+            var incrementExpress = 50.00; // Increment amount for express shipping per 10 items
+
+            var selectedValue = $('.shipping-option').val();
+            var totalQuantity = getTotalQuantity();
+
+            if (selectedValue === 'Select Shipping') {
+                // If 'Select Shipping' is chosen, display shipping fee as ₱0.00
+                $('.shipping-fee-badge').text('Shipping Fee: ₱0.00');
+            } else {
+                var baseFee = selectedValue === '1' ? baseFeeStandard : baseFeeExpress;
+
+                // Calculate additional fees based on total quantity exceeding the threshold (10 items)
+                var additionalFees = 0; // Initialize additional fees as 0
+
+                if (totalQuantity > 10) {
+                    // Calculate the increment amount based on the selected shipping type
+                    var incrementAmount = selectedValue === '1' ? incrementStandard : incrementExpress;
+                    
+                    // Calculate additional fees only if the total quantity exceeds 10
+                    additionalFees = Math.ceil((totalQuantity - 10) / 10) * incrementAmount;
+                }
+
+                // Calculate total shipping fee
+                var totalShippingFee = baseFee + additionalFees;
+
+                // Update the shipping fee badge
+                $('.shipping-fee-badge').text('Shipping Fee: ₱' + totalShippingFee.toFixed(2));
+
+                // Update the total shipping cost and total payment
+                updateTotalShippingCost();
+            }
+        }
     
-                // Loop through each shipping option and update the total shipping cost
-                $('.shipping-option').each(function () {
-                    var selectedValue = $(this).val();
-                    if (selectedValue === '1') {
-                        totalShippingCost += 100.00;
-                    } else if (selectedValue === '2') {
-                        totalShippingCost += 150.00;
-                    }
+            // Function to calculate and return the total quantity of items in the cart
+            function getTotalQuantity() {
+                var totalQuantity = 0;
+    
+                $('.col-md-2 label[for="quantity"]').each(function () {
+                    totalQuantity += parseInt($(this).text());
                 });
     
-                // Update the total shipping cost badge
+                return totalQuantity;
+            }
+    
+            // Function to update the total shipping cost and total payment
+            function updateTotalShippingCost() {
+                var totalShippingCost = parseFloat($('.shipping-fee-badge').text().replace('Shipping Fee: ₱', ''));
                 $('.order-total-money-badge').text('₱' + totalShippingCost.toFixed(2));
     
                 // Update the total payment based on merchandise subtotal and shipping total
@@ -208,14 +236,18 @@
     
             // Function to update the total payment
             function updateTotalPayment() {
-                var merchandiseSubtotal = @json($totalPricesSum);
+                var merchandiseSubtotal = parseFloat('{{ $totalPricesSum }}');
                 var shippingTotal = parseFloat($('.order-total-money-badge').text().replace('₱', ''));
                 var totalPayment = merchandiseSubtotal + shippingTotal;
     
-                // Update the total payment badge
                 $('.total-payment-badge').text('₱' + totalPayment.toFixed(2));
             }
+    
+            // Initial update when the page loads
+            updateShippingFee();
         });
-    </script>    
+    </script>
+    
+    
 @endif
 @endsection

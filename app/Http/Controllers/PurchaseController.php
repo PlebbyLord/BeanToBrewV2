@@ -54,8 +54,8 @@ class PurchaseController extends Controller
             'item_description' => 'required|string',
             'coffee_type' => 'required|in:green,roasted,grinded',
             'expiry_date' => 'required|date|after_or_equal:today',
-            'production_date' => 'required|date|after_or_equal:today', // Validate production date
-            'branch' => 'required|exists:mappings,name', // Validate that the selected branch exists
+            'production_date' => 'required|date|after_or_equal:today',
+            'branch' => 'required|exists:mappings,name',
         ]);
     
         $user = auth()->user();
@@ -68,13 +68,13 @@ class PurchaseController extends Controller
     
         switch ($request->coffee_type) {
             case 'green':
-                $expiryDate = Carbon::parse($productionDate)->addYears(2); // Expiry after 2 years for green coffee
+                $expiryDate = Carbon::parse($productionDate)->addYears(2);
                 break;
             case 'roasted':
-                $expiryDate = Carbon::parse($productionDate)->addYears(1)->addMonths(6); // Expiry after 1 year 6 months for roasted coffee
+                $expiryDate = Carbon::parse($productionDate)->addYears(1)->addMonths(6);
                 break;
             case 'grinded':
-                $expiryDate = Carbon::parse($productionDate)->addMonths(6); // Expiry after 6 months for ground coffee
+                $expiryDate = Carbon::parse($productionDate)->addMonths(6);
                 break;
         }
     
@@ -83,15 +83,17 @@ class PurchaseController extends Controller
         $item->user_id = $user->id;
         $item->item_name = $request->item_name;
         $item->coffee_type = $request->coffee_type;
-        $item->production_date = $productionDate; // Set production date
+        $item->production_date = $productionDate;
         $item->expiry_date = $expiryDate;
         $item->branch = $request->branch;
     
         // Handle item_image upload and save its path
         if ($request->hasFile('item_image')) {
-            $imagePath = $request->file('item_image')->store('images', 'public');
-            $item->item_image = $imagePath;
+            $imageFile = $request->file('item_image');
+            $imagePath = $imageFile->move(public_path('storage/images'), $imageFile->getClientOriginalName());
+            $item->item_image = 'images/' . $imageFile->getClientOriginalName(); // Save image path in the 'item_image' attribute
         }
+    
         $item->item_price = $request->item_price;
         $item->item_stock = $request->item_stock;
         $item->item_description = $request->item_description;

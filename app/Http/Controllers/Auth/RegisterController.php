@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerificationCodeEmail;
 
 class RegisterController extends Controller
 {
@@ -64,6 +67,7 @@ class RegisterController extends Controller
                     }
                 },
             ],
+            'birthday' => ['required', 'date'],
         ]);
     }
     
@@ -76,23 +80,46 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // Set default role to 0
         $role = 0;
-
-        // Check if the email is beantobrew24@gmail.com
+        $verification_status = 0;
+    
+        // Set role and verification status based on email condition
         if ($data['email'] === 'beantobrew24@gmail.com') {
-            $role = 2; // Set role to 2
+            $role = 2;
+            $verification_status = 1;
         }
-
-        // Create user with role
-        return User::create([
+    
+        // Generate a 6-digit verification code
+        $verification_code = str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
+    
+        // Create user instance
+        $user = User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'address' => $data['address'], // Add address to user creation
-            'mobile_number' => $data['mobile_number'], // Add mobile number to user creation
-            'role' => $role, // Assign role based on email
+            'address' => $data['address'],
+            'mobile_number' => $data['mobile_number'],
+            'birthday' => $data['birthday'],
+            'role' => $role,
+            'verification_status' => $verification_status,
+            'verification_code' => $verification_code, // Save verification code
         ]);
+    
+        // Send verification email
+        $this->sendVerificationEmail($user);
+    
+        return $user;
+    }
+
+        protected function sendVerificationEmail($user)
+    {
+        Mail::to($user->email)->send(new VerificationCodeEmail($user->verification_code));
+    }
+
+    protected function registered($request, $user)
+    {
+        // After successful registration, you can customize the redirect here
+        return redirect()->route('verification.form');
     }
 }

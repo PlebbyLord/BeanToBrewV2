@@ -121,8 +121,9 @@ class SalesController extends Controller
     public function online(Request $request)
     {
         // Retrieve all orders
-        $orders = Orders::query();
-    
+        $orders = Orders::query()
+            ->orderByDesc('created_at');
+        
         // Check if filter parameters are provided in the request
         if ($request->filled('month')) {
             // Validate the request
@@ -156,7 +157,8 @@ class SalesController extends Controller
     public function onsite(Request $request)
     {
         // Retrieve all cashiers
-        $cashiers = Cashier::query();
+        $cashiers = Cashier::query()
+            ->orderByDesc('created_at');
     
         // Check if filter parameters are provided in the request
         if ($request->filled('month')) {

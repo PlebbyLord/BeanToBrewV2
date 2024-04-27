@@ -22,4 +22,9 @@ class Schedule extends Model
     ];
 
     protected $dates = ['Date_Set'];
+
+    public function harvest()
+    {
+        return $this->hasOne(Harvest::class);
+    }
 }

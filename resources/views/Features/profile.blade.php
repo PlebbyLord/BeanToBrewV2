@@ -24,7 +24,7 @@
                         <input type="file" name="image1" class="form-control" accept=".jpg, .jpeg, .png" onchange="previewImage(this)">
                         <small id="fileHelp1" class="form-text text-muted">Accepted formats: .jpg, .jpeg, .png. Maximum size: 10MB</small>
                         <div id="fileError1" class="text-danger"></div>
-                    </div>
+                    </div>                    
 
                     {{-- Right Column: Name, Address, Number --}}
                     <div class="col-md-8">
@@ -46,6 +46,11 @@
                         <div class="mb-3">
                             <label for="address">Address</label>
                             <input type="text" name="address" class="form-control" value="{{ auth()->user()->address }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="birthday">Birthday</label>
+                            <input type="text" name="birthday" class="form-control" value="{{ auth()->user()->birthday }}" readonly>
                         </div>                     
                     </div>                                       
                 </div>

@@ -32,26 +32,50 @@
                             <td><?php echo e($schedule->Date_Set); ?></td>
                             <td><?php echo e($schedule->Schedule_Type); ?></td>
                             <td>
-                                <?php if($schedule->progress_status == 0&& $schedule->Date_Set > now()): ?>
+                                <?php if($schedule->progress_status == 0 && $schedule->Date_Set > now()): ?>
                                     Waiting
                                 <?php elseif($schedule->progress_status == 0 && $schedule->Date_Set < now()): ?> 
-                                    Delayed
+                                    Today/Delayed
                                 <?php elseif($schedule->progress_status == 1): ?>
                                     In Progress   
                                 <?php endif; ?>
                             </td>
                             <td>                                
                                 <?php if($schedule->progress_status == 0 && $schedule->Date_Set <= now()): ?>
-                                <form action="<?php echo e(route('schedStart', $schedule->id)); ?>" method="POST">
-                                    <?php echo csrf_field(); ?>
-                                    <button type="submit" class="btn btn-danger">Start Task</button>
-                                </form>
-                            <?php elseif($schedule->progress_status == 1): ?>
-                                <form action="<?php echo e(route('updateProgress', $schedule->id)); ?>" method="POST">
-                                    <?php echo csrf_field(); ?>
-                                    <button type="submit" class="btn btn-danger">Complete</button>
-                                </form>
-                            <?php endif; ?>                                                     
+                                    <form action="<?php echo e(route('schedStart', $schedule->id)); ?>" method="POST">
+                                        <?php echo csrf_field(); ?>
+                                        <button type="submit" class="btn btn-danger">Start Task</button>
+                                    </form>
+                                <?php elseif($schedule->progress_status == 1): ?>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#harvestModal<?php echo e($schedule->id); ?>">
+                                    Complete
+                                </button>                           
+
+                                    <!-- Harvest Modal -->
+                                    <div class="modal fade" id="harvestModal<?php echo e($schedule->id); ?>" tabindex="-1" role="dialog" aria-labelledby="harvestModalLabel<?php echo e($schedule->id); ?>" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="harvestModalLabel<?php echo e($schedule->id); ?>">Complete Harvesting Schedule</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Harvesting completion form -->
+                                                    <form action="<?php echo e(route('updateProgress', $schedule->id)); ?>" method="POST">
+                                                        <?php echo csrf_field(); ?>
+                                                        <div class="form-group">
+                                                            <label for="kilosHarvested">Enter Kilos Harvested:</label>
+                                                            <input type="number" class="form-control" id="kilosHarvested" name="kilos_harvested" required>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary">Complete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>                                                     
                             </td>
                         </tr>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -62,6 +86,24 @@
     </div>
 </div>
 
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('scripts'); ?>
+<!-- CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Ensure jQuery and Bootstrap JS scripts are loaded -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Your script to close modal after form submission -->
+<script>
+    $(document).ready(function() {
+        $('form').on('submit', function() {
+            $(this).closest('.modal').modal('hide');
+        });
+    });
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\billy\Desktop\Laravel-Projects\BeanToBrewV2\resources\views/Features/Schedules/history.blade.php ENDPATH**/ ?>

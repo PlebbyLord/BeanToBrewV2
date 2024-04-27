@@ -8,7 +8,7 @@
                     <a href="<?php echo e(route('features.schedule')); ?>" class="btn btn-sm btn-primary btn-lg px-4" style="font-size: 15px;">Back</a>
                 </div>
                 <div class="col-9 text-center">
-                    <h5>Planting Schedule</h5>
+                    <h5>Set A Schedule</h5>
                 </div>
             </div>
         </div> 
@@ -19,7 +19,7 @@
 
             </div>
             <?php endif; ?>
-            <form method="post" action="<?php echo e(route('plant-schedule')); ?>">
+            <form method="post" action="<?php echo e(route('save-schedule')); ?>">
                 <?php echo csrf_field(); ?>
                 <div class="form-group">
                     <label for="coffeeType">Select Coffee Species:</label>
@@ -83,13 +83,12 @@
 
     // Function to calculate the best year for harvest using linear regression
     function calculateBestHarvestYear(selectedDate) {
-        // Implement your linear regression algorithm here
-        // For demonstration, let's assume the best year is 5 years after planting
         var plantingYear = selectedDate.year();
         var bestYear = plantingYear + 5; // Adjust this based on your algorithm
         return bestYear;
     }
 </script>
+
 
 <?php $__env->stopSection(); ?>
 

@@ -18,23 +18,6 @@
 <?php else: ?>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-20 mb-4">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center" style="font-size: 15px;">
-                        <span style="width: 1%;"></span>
-                        <span style="width: 15%;"><?php echo e(__('Product')); ?></span>
-                        <span style="width: 10%;"><?php echo e(__('Unit Price')); ?></span>
-                        <span style="width: 10%;"><?php echo e(__('Quantity')); ?></span>
-                        <span style="width: 10%;"><?php echo e(__('Name')); ?></span>
-                        <span style="width: 8%;"><?php echo e(__('Number')); ?></span>
-                        <span style="width: 7%;"><?php echo e(__('Address')); ?></span>
-                        <span style="width: 10%;"><?php echo e(__('Shipping Option')); ?></span>
-                        <span style="width: 10%;"><?php echo e(__('Payment Option')); ?></span>
-                        <span style="width: 9%;"><?php echo e(__('Item Subtotal')); ?></span>
-                        <span style="width: 14%;"><?php echo e(__('Delivery Status')); ?></span>
-                    </div>
-                </div>
-            </div>
             <?php $__currentLoopData = $carts->where('user_id', auth()->id())->where('checkout_status', 2)->groupBy('purchase.user'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $companyName => $companyCarts): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="col-md-20 mb-3"> <!-- Adjust the width as needed -->
                 <div class="card">
@@ -46,9 +29,26 @@
                             $totalPricesSum = 0; // Reset the total price for each group
                         ?>
                         <?php $__currentLoopData = $companyCarts->groupBy(function ($item) {
-                            return $item->orders->first()->created_at->format('H:i'); // Group by hours, minutes, and seconds
+                            return $item->orders->first()->created_at->format('Y-m-d H:i');  // Group by hours, minutes, and seconds
                         }); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $time => $timeCarts): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="card">
+                            <div class="col-md-20 mb-0">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center" style="font-size: 15px;">
+                                        <span style="width: 1%;"></span>
+                                        <span style="width: 15%;"><?php echo e(__('Product')); ?></span>
+                                        <span style="width: 10%;"><?php echo e(__('Unit Price')); ?></span>
+                                        <span style="width: 10%;"><?php echo e(__('Quantity')); ?></span>
+                                        <span style="width: 10%;"><?php echo e(__('Name')); ?></span>
+                                        <span style="width: 8%;"><?php echo e(__('Number')); ?></span>
+                                        <span style="width: 7%;"><?php echo e(__('Address')); ?></span>
+                                        <span style="width: 10%;"><?php echo e(__('Shipping Option')); ?></span>
+                                        <span style="width: 10%;"><?php echo e(__('Payment Option')); ?></span>
+                                        <span style="width: 9%;"><?php echo e(__('Item Subtotal')); ?></span>
+                                        <span style="width: 14%;"><?php echo e(__('Delivery Status')); ?></span>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="card-header d-flex justify-content-between" style="font-size: 15px;">
                                 <?php echo e($time); ?>
 
@@ -145,7 +145,7 @@
                                     <div class="card">
                                         <div class="card-body"> <!-- Added card-body here -->
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <span class="badge badge-secondary text-dark" id="totalPaymentLabel" style="margin-top: 5px; margin-left: 910px; font-size: 15px;">Total Payment w/shipping:</span> <!-- Adjusted margin-left -->
+                                                <span class="badge badge-secondary text-dark" id="totalPaymentLabel" style="margin-top: 5px; font-size: 15px;">Total Payment w/shipping:</span> <!-- Adjusted margin-left -->
                                                 <span class="badge badge-secondary text-dark" id="totalPaymentBadge" style="font-size: 17px;">₱<?php echo e(number_format($totalPricesSum, 2)); ?></span>
                                             </div>
                                         </div>

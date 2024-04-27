@@ -27,6 +27,9 @@ class User extends Authenticatable
         'mobile_number', // Added mobile_number to mass assignable attributes
         'role', // Added role to mass assignable attributes
         'branch',
+        'birthday',
+        'verification_status',
+        'verification_code',
     ];
 
     /**

@@ -36,6 +36,6 @@ class DeliveryConfirmation extends Mailable
     public function build()
     {
         return $this->from('beantobrew24@gmail.com', 'Bean to Brew')
-                    ->markdown('emails.order_delivered');
+                    ->markdown('emails.delivery_confirmation');
     } 
 }

@@ -104,6 +104,11 @@
 
                                                     </button>
                                                 <?php endif; ?>
+                                            <?php else: ?>
+                                                <a href="<?php echo e(route('login')); ?>" class="btn btn-primary">
+                                                    <?php echo e(__('Login to Order')); ?>
+
+                                                </a>
                                             <?php endif; ?>      
                                         </div>
                                     <?php else: ?>

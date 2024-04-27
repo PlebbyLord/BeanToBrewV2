@@ -5,6 +5,12 @@
 </div>
 <?php endif; ?>
 
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <?php $__env->startSection('content'); ?>
 <div class="container">
     <div class="row justify-content-center">
@@ -73,17 +79,17 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="mobile_number" class="col-md-4 col-form-label text-md-end"><?php echo e(__('Mobile Number')); ?></label>
+                            <label for="birthday" class="col-md-4 col-form-label text-md-end"><?php echo e(__('Birthday')); ?></label>
                             <div class="col-md-6">
-                                <input id="mobile_number" type="number" class="form-control <?php $__errorArgs = ['mobile_number'];
+                                <input id="birthday" type="text" class="form-control <?php $__errorArgs = ['birthday'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" name="mobile_number" value="<?php echo e(old('mobile_number')); ?>" autocomplete="mobile_number">
-                                <?php $__errorArgs = ['mobile_number'];
+unset($__errorArgs, $__bag); ?>" name="birthday" value="<?php echo e(old('birthday')); ?>" autocomplete="off">
+                                <?php $__errorArgs = ['birthday'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -99,7 +105,33 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="row mb-3">
-                            <label for="address" class="col-md-4 col-form-label text-md-end"><?php echo e(__('Address')); ?></label>
+                            <label for="mobile_number" class="col-md-4 col-form-label text-md-end"><?php echo e(__('Mobile Number')); ?></label>
+                            <div class="col-md-6">
+                                <input id="mobile_number" type="text" class="form-control <?php $__errorArgs = ['mobile_number'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" name="mobile_number" value="<?php echo e(old('mobile_number')); ?>" autocomplete="mobile_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);">
+                                <?php $__errorArgs = ['mobile_number'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong><?php echo e($message); ?></strong>
+                                    </span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+                        </div> 
+
+                        <div class="row mb-3">
+                            <label for="address" class="col-md-4 col-form-label text-md-end"><?php echo e(__('Complete Address')); ?></label>
 
                             <div class="col-md-6">
                                 <input id="address" type="text" class="form-control <?php $__errorArgs = ['address'];
@@ -204,6 +236,16 @@ unset($__errorArgs, $__bag); ?>
         </div>
     </div>
 </div>
+
+<script>
+    flatpickr('#birthday', {
+        dateFormat: 'Y-m-d', // Set date format (e.g., YYYY-MM-DD)
+        maxDate: new Date(), // Set maximum selectable date (optional)
+        allowInput: true, // Allow manual input (optional)
+        // Additional configuration options can be added here
+    });
+</script>
+
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\billy\Desktop\Laravel-Projects\BeanToBrewV2\resources\views/auth/register.blade.php ENDPATH**/ ?>

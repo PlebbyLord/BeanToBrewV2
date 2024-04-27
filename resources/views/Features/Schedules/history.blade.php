@@ -34,26 +34,50 @@
                             <td>{{ $schedule->Date_Set }}</td>
                             <td>{{ $schedule->Schedule_Type }}</td>
                             <td>
-                                @if($schedule->progress_status == 0&& $schedule->Date_Set > now())
+                                @if($schedule->progress_status == 0 && $schedule->Date_Set > now())
                                     Waiting
                                 @elseif($schedule->progress_status == 0 && $schedule->Date_Set < now()) 
-                                    Delayed
+                                    Today/Delayed
                                 @elseif($schedule->progress_status == 1)
                                     In Progress   
                                 @endif
                             </td>
                             <td>                                
                                 @if($schedule->progress_status == 0 && $schedule->Date_Set <= now())
-                                <form action="{{ route('schedStart', $schedule->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger">Start Task</button>
-                                </form>
-                            @elseif($schedule->progress_status == 1)
-                                <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger">Complete</button>
-                                </form>
-                            @endif                                                     
+                                    <form action="{{ route('schedStart', $schedule->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger">Start Task</button>
+                                    </form>
+                                @elseif($schedule->progress_status == 1)
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#harvestModal{{ $schedule->id }}">
+                                    Complete
+                                </button>                           
+
+                                    <!-- Harvest Modal -->
+                                    <div class="modal fade" id="harvestModal{{ $schedule->id }}" tabindex="-1" role="dialog" aria-labelledby="harvestModalLabel{{ $schedule->id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="harvestModalLabel{{ $schedule->id }}">Complete Harvesting Schedule</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Harvesting completion form -->
+                                                    <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
+                                                        @csrf
+                                                        <div class="form-group">
+                                                            <label for="kilosHarvested">Enter Kilos Harvested:</label>
+                                                            <input type="number" class="form-control" id="kilosHarvested" name="kilos_harvested" required>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary">Complete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif                                                     
                             </td>
                         </tr>
                         @endforeach
@@ -64,4 +88,22 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<!-- CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Ensure jQuery and Bootstrap JS scripts are loaded -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Your script to close modal after form submission -->
+<script>
+    $(document).ready(function() {
+        $('form').on('submit', function() {
+            $(this).closest('.modal').modal('hide');
+        });
+    });
+</script>
 @endsection

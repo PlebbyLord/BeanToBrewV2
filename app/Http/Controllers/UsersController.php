@@ -98,6 +98,7 @@ class UsersController extends Controller
             'mobile_number' => $validatedData['mobile_number'],
             'branch' => $validatedData['branch'],
             'role' => 1, // Set the role to admin
+            'verification_status' => 1,
         ]);
 
         // Redirect back to the previous page with a success message

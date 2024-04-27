@@ -5,6 +5,7 @@ use App\Http\Controllers\SalesController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\VerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,10 @@ Route::get('/terms', [App\Http\Controllers\HomeController::class, 'terms'])->nam
 Route::get('/mapping', [App\Http\Controllers\MappingController::class, 'index'])->name('features.mapping');
 Route::get('/viewitem/{id}', [App\Http\Controllers\ViewItemController::class, 'showItem'])->name('viewitem.showItem');
 Route::get('/viewitem', [App\Http\Controllers\ViewItemController::class, 'showItem'])->name('viewitem.showItem.query');
+Route::get('/verification/form', [App\Http\Controllers\VerificationController::class, 'showVerificationForm'])->name('verification.form');
+Route::post('/verify', [VerificationController::class, 'verify'])->name('verification.verify');
+
+Route::middleware('verifyStatus')->group(function () {
 Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('features.cart');
 Route::get('/orders', [App\Http\Controllers\OrdersController::class, 'index'])->name('features.orders');
 Route::post('/cart/add', [App\Http\Controllers\CartController::class, 'addToCart'])->name('cart.addToCart');
@@ -38,41 +43,23 @@ Route::post('/rate/save', [App\Http\Controllers\RatingController::class, 'save']
 Route::get('mapping/getMappingData', [MappingController::class, 'getMappingData'])->name('mapping.getMappingData');
 Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 Route::post('/update-profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('update.profile');
-
+});
 
 Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/schedule', [App\Http\Controllers\ScheduleController::class, 'index'])->name('features.schedule');
-    Route::post('/plant-schedule', [App\Http\Controllers\ScheduleController::class, 'PlantingSave'])->name('plant-schedule');
-    Route::post('/dry-schedule', [App\Http\Controllers\ScheduleController::class, 'DryingSave'])->name('dry-schedule');
-    Route::post('/ferment-schedule', [App\Http\Controllers\ScheduleController::class, 'FermentingSave'])->name('ferment-schedule');
+    Route::post('/save-schedule', [App\Http\Controllers\ScheduleController::class, 'saveSchedule'])->name('save-schedule');
     Route::post('/grind-schedule', [App\Http\Controllers\ScheduleController::class, 'GrindingSave'])->name('grind-schedule');
-    Route::post('/hull-schedule', [App\Http\Controllers\ScheduleController::class, 'HullingSave'])->name('hull-schedule');
     Route::post('/pack-schedule', [App\Http\Controllers\ScheduleController::class, 'PackagingSave'])->name('pack-schedule');
-    Route::post('/pulp-schedule', [App\Http\Controllers\ScheduleController::class, 'PulpingSave'])->name('pulp-schedule');
     Route::post('/roast-schedule', [App\Http\Controllers\ScheduleController::class, 'RoastingSave'])->name('roast-schedule');
-    Route::post('/sort-schedule', [App\Http\Controllers\ScheduleController::class, 'SortingSave'])->name('sort-schedule');
-    Route::post('/prune-schedule', [App\Http\Controllers\ScheduleController::class, 'PruneSave'])->name('prune-schedule');
-    Route::post('/water-schedule', [App\Http\Controllers\ScheduleController::class, 'WateringSave'])->name('water-schedule');
-    Route::post('/weekly-schedule', [App\Http\Controllers\ScheduleController::class, 'WeeklyChecksSave'])->name('weekly-schedule');
-    Route::post('/pesticide-schedule', [App\Http\Controllers\ScheduleController::class, 'PesticideSave'])->name('pesticide-schedule');
     Route::get('/get-batch-numbers', [ScheduleController::class,'getBatchNumbers'])->name('get-batch-numbers');
     Route::get('/harvest', [ScheduleController::class, 'harvest'])->name('harvest');
     Route::get('/history', [ScheduleController::class, 'history'])->name('history');
     Route::post('/sched-start/{id}', [ScheduleController::class, 'schedStart'])->name('schedStart');
     Route::post('/update-progress/{id}', [ScheduleController::class, 'updateProgress'])->name('updateProgress');         
     Route::get('/completed', [ScheduleController::class, 'completed'])->name('completed');
-    Route::get('/pesticide', [ScheduleController::class, 'pesticide'])->name('pesticide');
-    Route::get('/prune', [ScheduleController::class, 'prune'])->name('prune');
-    Route::get('/dry', [ScheduleController::class, 'dry'])->name('dry');
-    Route::get('/ferment', [ScheduleController::class, 'ferment'])->name('ferment');
     Route::get('/grind', [ScheduleController::class, 'grind'])->name('grind');
-    Route::get('/hull', [ScheduleController::class, 'hull'])->name('hull');
     Route::get('/pack', [ScheduleController::class, 'pack'])->name('pack');
-    Route::get('/pulp', [ScheduleController::class, 'pulp'])->name('pulp');
     Route::get('/roast', [ScheduleController::class, 'roast'])->name('roast');
-    Route::get('/sort', [ScheduleController::class, 'sort'])->name('sort');
-    Route::get('/water', [ScheduleController::class, 'water'])->name('water');
-    Route::get('/weekly', [ScheduleController::class, 'weekly'])->name('weekly');
     Route::get('/calendar', [ScheduleController::class, 'calendar'])->name('calendar');
     Route::get('/inventory', [App\Http\Controllers\InventoryController::class, 'index'])->name('features.inventory');
     Route::get('/users', [App\Http\Controllers\UsersController::class, 'index'])->name('features.users');

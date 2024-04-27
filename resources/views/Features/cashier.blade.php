@@ -177,6 +177,42 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-EVSTQN3/azgB0/pWqTGzFdsQX5qX04q7BDk2Jl/bi5z9Jq1+VqpCJNbALVFpvpG1" crossorigin="anonymous"></script>
 
 <script>
+// Perform checkout action (form submission)
+document.addEventListener('DOMContentLoaded', function() {
+        const checkoutForm = document.getElementById('checkoutForm');
+
+        checkoutForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Submit the form via AJAX to trigger the checkout process
+            fetch(checkoutForm.action, {
+                method: 'POST',
+                body: new FormData(checkoutForm)
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                // Create a Blob URL for the returned PDF content
+                const url = URL.createObjectURL(blob);
+
+                // Dynamically create an <a> element to trigger download
+                const a = document.createElement('a');
+                a.href = url;
+                a.target = '_blank'; // Ensure opening in a new tab
+                a.download = 'receipt.pdf'; // Specify a filename for the download
+                a.click(); // Programmatically trigger the click event
+
+                // Clean up the Blob URL after use
+                URL.revokeObjectURL(url);
+
+                // Redirect back or show success message (if needed)
+                // You can handle redirect or display success message as required
+                // window.location.href = '/success'; // Example redirect
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
