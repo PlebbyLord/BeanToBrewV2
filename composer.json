@@ -15,7 +15,8 @@
         "league/csv": "^9.15",
         "maatwebsite/excel": "^1.1",
         "php-ai/php-ml": "^0.10.0",
-        "phpoffice/phpspreadsheet": "^2.0"
+        "phpoffice/phpspreadsheet": "^2.0",
+        "rubix/ml": "^2.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

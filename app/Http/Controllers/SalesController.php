@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\DeliveryConfirmation;
 use App\Models\Cart;
 use App\Models\Cashier;
+use App\Models\Dataset;
 use App\Models\Orders;
 use App\Models\Purchase;
 use App\Models\Sales;
@@ -14,12 +15,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Rubix\ML\Classifiers\ClassificationTree;
+use Rubix\ML\Classifiers\RandomForest;
+use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Datasets\Unlabeled;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
 class SalesController extends Controller
 {
-    
+    public $tempArray = [], $targets = [], $resultArr=[], $l5y=[], $input = [];//this is the current year data;
     /**
      * Display a listing of the resource.
      */
@@ -115,8 +120,122 @@ class SalesController extends Controller
 
     public function stats()
     {
-        return view('Features.stats');
+
+        $sales = Dataset::get()->toArray();
+        $this->readData($sales);
+        
+        $model = new RandomForest(new ClassificationTree(10), 300, 0.1, true);
+
+        $dataset = new Labeled($this->tempArray, $this->targets);
+        $model->train($dataset);
+       
+
+        //get the last 5 years data
+        $this->l5y = $this->getLast5Years();
+        // start prediction
+        $this->predictingFutureYearSales($this->l5y);
+        $inputDataset = new Unlabeled($this->input);
+        $result = $model->predict($inputDataset); 
+        
+        $currentYear = (int)date('Y');
+        
+        $salesInPast5YEars = collect([]);
+        foreach ($result as $key => $v) {
+            $explodedResult = explode('-', $v);
+           
+            // dd($this->input[$key][3] + $explodedResult[4]);
+    
+
+            $salesPerKg5Y = round((double)$this->input[$key][3] + (double)$explodedResult[4], 2);
+            $salesInPast5YEars->push([
+                'id' =>$explodedResult[0],
+                'year' => $currentYear++,
+                'month' => $explodedResult[2],
+                'day' => $explodedResult[3],
+                'sales_kg' => $salesPerKg5Y,
+                'coffee' =>  $explodedResult[5],
+            ]);
+        }
+
+        return view('Features.stats', ['salesInPast5YEars' => $salesInPast5YEars]);
     }
+
+    private function readData($data){
+        if($data){
+            foreach ($data as $key => $value) {
+                $explodedDate = explode('-', $value['sales_date']);
+                // Remove the original sales_date column
+                unset($value['sales_date']);
+                // Create an associative array with custom keys
+                $customKeys = [
+                    'year' => (int)$explodedDate[0],
+                    'month' => $explodedDate[1] < 10 ? (int)ltrim($explodedDate[1], '0') : (int)$explodedDate[1],
+                    'day' => (int)$explodedDate[2] < 10 ? (int)ltrim($explodedDate[2], '0') : (int)$explodedDate[2],
+                    'sales_kg' => (double)$value['sales_kg'],
+                    'price_per_kilo' => (double)$value['price_per_kilo'],
+                ]; 
+               array_push($this->tempArray, $customKeys);
+
+
+
+               array_push($this->targets, $value['id'].'-'.$customKeys['year'].'-'.$customKeys['month'].'-'.$customKeys['day'].'-'.$customKeys['sales_kg'].'-'.$value['coffee_type'].' '.$value['coffee_form']);
+            }
+
+            //debuging  found on storage logs laravel.log
+            // info($this->tempArray[0]);
+            // info($this->targets[0]);
+        }
+    }
+
+    private function predictingFutureYearSales($lastFiveYearsData){
+        // Calculate sales for the next 5 years based on predictions for the last 5 years
+        $growthRate = 1.1; // Assuming a growth rate of 10%
+
+        foreach ($lastFiveYearsData as $key => $predictedSales) {
+            // dd($predictedSales);
+            $explodedDate = explode('-', $predictedSales->record_with_max_sales->sales_date);
+            // Remove the original sales_date column
+            unset($predictedSales->record_with_max_sales->sales_date);
+            // Create an associative array with custom keys
+            $Keys = [
+                (int)$explodedDate[0],
+                $explodedDate[1] < 10 ? (int)ltrim($explodedDate[1], '0') : (int)$explodedDate[1],
+                $explodedDate[2] < 10 ? (int)ltrim($explodedDate[2], '0') : (int)$explodedDate[2],
+                (double)$predictedSales->total_sales_kg * $growthRate,
+                (double)$predictedSales->record_with_max_sales->price_per_kilo,
+            ]; 
+
+            array_push($this->input,  $Keys);
+            
+            // $next5YearsSales[] = $predictedSales * $growthRate;
+            $growthRate += 0.1; // Increment growth rate by 10% for each subsequent year
+
+        }
+        // dd($this->input);
+    }
+
+    private function getLast5Years(){
+       $lastFiveYearsData = DB::table('datasets')
+        ->select(DB::raw('YEAR(sales_date) as year, SUM(sales_kg) as total_sales_kg'))
+        ->whereBetween(DB::raw('YEAR(sales_date)'), [date('Y') - 6, date('Y')])
+        ->groupBy(DB::raw('YEAR(sales_date)'))
+        ->orderBy('year', 'desc')
+        ->get()
+        ->toArray();
+
+        foreach ($lastFiveYearsData as &$data) {
+            $record = DB::table('datasets')
+                ->select('datasets.*')
+                ->whereYear('sales_date', $data->year)
+                ->orderBy('sales_kg', 'desc')
+                ->first();
+            
+            $data->record_with_max_sales = $record;
+        }
+        // dd($lastFiveYearsData);
+        return $lastFiveYearsData;
+    }
+
 
     public function online(Request $request)
     {
@@ -156,6 +275,7 @@ class SalesController extends Controller
     
     public function onsite(Request $request)
     {
+       
         // Retrieve all cashiers
         $cashiers = Cashier::query()
             ->orderByDesc('created_at');
@@ -181,13 +301,14 @@ class SalesController extends Controller
     
         // Retrieve all filtered cashiers
         $cashiers = $cashiers->get();
-    
+        // dd($cashiers);
         // Retrieve all purchase IDs from the filtered cashiers
         $purchaseIds = $cashiers->pluck('purchase_id');
     
         // Retrieve all item images from the purchases table using the filtered purchase IDs
         $itemImages = Purchase::whereIn('id', $purchaseIds)->pluck('item_image', 'id');
-    
+        
+        // dd($cashiers);
         // Pass the data to the view
         return view('Features.onsitesales', compact('cashiers', 'itemImages'));
     }

@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Purchase;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cashier extends Model
 {
@@ -17,4 +20,6 @@ class Cashier extends Model
         'item_price',
         'quantity',
     ];
+
+  
 }

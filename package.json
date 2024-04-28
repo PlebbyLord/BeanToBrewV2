@@ -7,14 +7,18 @@
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
+        "autoprefixer": "^10.4.19",
         "axios": "^1.6.4",
         "bootstrap": "^5.3.2",
         "laravel-vite-plugin": "^1.0.0",
+        "postcss": "^8.4.38",
         "sass": "^1.56.1",
+        "tailwindcss": "^3.4.3",
         "vite": "^5.0.0"
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.10",
-        "@fullcalendar/daygrid": "^6.1.10"
+        "@fullcalendar/daygrid": "^6.1.10",
+        "flowbite": "^2.3.0"
     }
 }
