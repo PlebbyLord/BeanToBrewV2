@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Checkout;
+use App\Models\Dataset;
 use App\Models\Orders;
 use App\Models\Sales;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
@@ -140,6 +142,13 @@ class CheckoutController extends Controller
         Cart::where('user_id', $user_id)
             ->where('checkout_status', 1)
             ->update(['checkout_status' => 2]);
+
+            // Return the updated cart data
+            $updatedCart = Cart::where('user_id', $user_id)->get();
+
+            // save record for dataset model copy
+            Dataset::create(['salse_date'=>Carbon::parse($updatedCart->updated_at)->format('y-m-d'), 'coffee_type'=> $updatedCart->item_name, 'coffee_form'=>'','sales_kg'=>$updatedCart->quantity, 'price_per_kilo'=>$updatedCart->item_price]);
+    
 
         // Pass order information and cart details to the view
         return redirect()->route('features.orders')->with('order', $order)->with('carts', $carts);

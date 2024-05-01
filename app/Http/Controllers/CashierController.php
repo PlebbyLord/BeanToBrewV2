@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cashier;
+use App\Models\Dataset;
 use App\Models\Purchase;
 use App\Models\TempCash;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CashierController extends Controller
@@ -191,7 +193,7 @@ class CashierController extends Controller
     
         // Loop through each item and copy it to the Cashier table
         foreach ($tempCashes as $tempCash) {
-            Cashier::create([
+           $ch = Cashier::create([
                 'user_id' => $tempCash->user_id,
                 'purchase_id' => $tempCash->purchase_id,
                 'item_name' => $tempCash->item_name,
@@ -204,6 +206,10 @@ class CashierController extends Controller
             $purchase = Purchase::findOrFail($tempCash->purchase_id);
             $purchase->item_stock -= $tempCash->quantity;
             $purchase->save();
+
+            // save record for dataset model copy
+            Dataset::create(['sales_date'=>Carbon::parse($ch->created_at)->format('y-m-d'), 'coffee_type'=> $ch->item_name, 'coffee_form'=>'','sales_kg'=>$ch->quantity, 'price_per_kilo'=>12.77]);
+    
         }
     
         // Delete all items from the TempCash table

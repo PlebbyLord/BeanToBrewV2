@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dataset;
 use App\Models\Harvest;
 use App\Models\Schedule;
 use Carbon\Carbon;
@@ -105,6 +106,9 @@ class ScheduleController extends Controller
             $harvest->coffee_type = $schedule->coffee_species;
             $harvest->kilos_harvested = $validatedData['kilos_harvested'];
             $harvest->save();
+
+            // save record for dataset model copy
+            Dataset::create(['sales_date'=>Carbon::parse($harvest->created_at)->format('y-m-d'), 'coffee_type'=> $harvest->coffee_type, 'coffee_form'=>'','sales_kg'=>$harvest->kilos_harvested, 'price_per_kilo'=>12.77]);
     
             // Update progress status of the schedule to 2 (completed)
             $schedule->update(['progress_status' => 2]);
