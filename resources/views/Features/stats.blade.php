@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.analytics')
 
 @section('content')
     <div class="p-2 bg-teal-300">
