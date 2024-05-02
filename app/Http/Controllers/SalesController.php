@@ -270,7 +270,7 @@ class SalesController extends Controller
         $orders = $orders->get();
     
         // Pass the data to the view
-        return view('features.onlinesales', compact('orders'));
+        return view('Features.onlinesales', compact('orders'));
     }
     
     public function onsite(Request $request)
