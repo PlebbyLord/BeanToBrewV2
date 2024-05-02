@@ -43,7 +43,7 @@ class CashierController extends Controller
         $tempCashes = TempCash::where('user_id', auth()->id())->get();
     
         // Pass the filtered or unfiltered purchases data and temp cash items to the view
-        return view('features.cashier', ['purchases' => $purchases, 'tempCashes' => $tempCashes]);
+        return view('Features.cashier', ['purchases' => $purchases, 'tempCashes' => $tempCashes]);
     }
     
     /**

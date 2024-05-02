@@ -59,6 +59,6 @@ class OrdersController extends Controller
     public function ratePage($cart_id)
     {
         $cart = Cart::findOrFail($cart_id); // Retrieve the cart item using the provided cart_id
-        return view('features.rate', compact('cart'));
+        return view('Features.rate', compact('cart'));
     }
 }

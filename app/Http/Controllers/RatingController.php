@@ -94,7 +94,7 @@ class RatingController extends Controller
         $cart->save();
         
         // Redirect back with a success message
-        return redirect()->route('features.orders')->with('success', 'Rating saved successfully.');
+        return redirect()->route('Features.orders')->with('success', 'Rating saved successfully.');
     }
     
     public function hide($id)

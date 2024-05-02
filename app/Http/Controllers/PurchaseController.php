@@ -130,7 +130,7 @@ class PurchaseController extends Controller
         $tempInvs = TempInv::where('user_id', auth()->id())->get();
     
         // Pass the filtered or unfiltered other branch items and temp inv items to the view
-        return view('features.transfer', ['otherBranchItems' => $otherBranchItems, 'tempInvs' => $tempInvs]);
+        return view('Features.transfer', ['otherBranchItems' => $otherBranchItems, 'tempInvs' => $tempInvs]);
     }
 
     public function addToTempInv(Request $request)

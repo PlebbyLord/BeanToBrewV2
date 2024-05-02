@@ -114,6 +114,6 @@ class UsersController extends Controller
         $branches = Mapping::all();
     
         // Pass filtered users data and branches data to the view
-        return view('features.admins', compact('users', 'branches'));
+        return view('Features.admins', compact('users', 'branches'));
     }
 }

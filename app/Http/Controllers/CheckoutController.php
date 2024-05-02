@@ -151,6 +151,6 @@ class CheckoutController extends Controller
     
 
         // Pass order information and cart details to the view
-        return redirect()->route('features.orders')->with('order', $order)->with('carts', $carts);
+        return redirect()->route('Features.orders')->with('order', $order)->with('carts', $carts);
     }
 }
