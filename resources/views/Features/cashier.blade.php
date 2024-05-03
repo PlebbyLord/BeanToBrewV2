@@ -151,7 +151,7 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="{{ route('cashier.checkout') }}" method="POST">
+                                                    <form id="checkoutForm" action="{{ route('cashier.checkout') }}" method="POST">
                                                         @csrf
                                                         <label for="changeAmount">Enter the amount paid by the buyer:</label>
                                                         <input type="number" id="changeAmount" name="change" class="form-control" required>
@@ -159,7 +159,7 @@
                                                         <input type="hidden" name="total_sale" value="{{ $totalSale }}">
                                                         <button type="submit" class="btn btn-primary mt-3">Checkout</button>
                                                     </form>
-                                                </div>
+                                                </div>  
                                             </div>
                                         </div>
                                     </div>
@@ -179,46 +179,36 @@
 <script>
 // Perform checkout action (form submission)
 document.addEventListener('DOMContentLoaded', function() {
-    const checkoutForm = document.querySelector('#checkoutForm');
+        const checkoutForm = document.getElementById('checkoutForm');
 
-    checkoutForm.addEventListener('submit', function(event) {
-        event.preventDefault();
+        checkoutForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        // Submit the form via AJAX to trigger the checkout process
-        fetch(checkoutForm.action, {
-            method: 'POST',
-            body: new FormData(checkoutForm)
-        })
-        .then(response => {
-            if (response.ok) {
-                // If response is successful, read the PDF content
-                return response.blob();
-            } else {
-                throw new Error('Network response was not ok.');
-            }
-        })
-        .then(blob => {
-            // Create a Blob URL for the returned PDF content
-            const url = URL.createObjectURL(blob);
+            // Submit the form via AJAX to trigger the checkout process
+            fetch(checkoutForm.action, {
+                method: 'POST',
+                body: new FormData(checkoutForm)
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                // Create a Blob URL for the returned PDF content
+                const url = URL.createObjectURL(blob);
 
-            // Open the PDF content in a new tab/window
-            const newTab = window.open(url, '_blank');
-            if (!newTab) {
-                // Handle popup blocker or unable to open new tab
-                alert('Please allow pop-ups for this website to view the receipt.');
-            }
+                // Open the generated PDF in a new tab
+                window.open(url, '_blank');
 
-            // Clean up the Blob URL after use
-            URL.revokeObjectURL(url);
+                // Clean up the Blob URL after use
+                URL.revokeObjectURL(url);
 
-            // Optionally, you can redirect back or show a success message here
-            // window.location.href = '/success'; // Example redirect
-        })
-        .catch(error => {
-            console.error('Error:', error);
+                // Optionally, redirect back or show success message after opening PDF
+                // You can handle redirect or display success message as needed
+                // window.location.href = '/success'; // Example redirect
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         });
     });
-});
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
