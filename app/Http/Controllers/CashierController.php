@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
 class CashierController extends Controller
@@ -216,7 +217,10 @@ class CashierController extends Controller
         TempCash::where('user_id', auth()->id())->delete();
     
         // Return response with success message and PDF content
-        return $response;
+        return Response::make($pdfOutput, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="receipt.pdf"', // Optional filename for download
+        ]);
     }
     
     public function remove(Request $request)

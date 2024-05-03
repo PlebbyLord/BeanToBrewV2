@@ -139,43 +139,32 @@
     @endforeach
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // JavaScript for handling month filtering
-    const checkboxes = document.querySelectorAll('input[name="month[]"]');
-    const allCheckbox = document.getElementById('all');
+    $(document).ready(function() {
+        $('#exportForm').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
 
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            const selectedMonths = Array.from(document.querySelectorAll('input[name="month[]"]:checked')).map(checkbox => checkbox.value);
-            const urlParams = new URLSearchParams(window.location.search);
+            // Assuming totalSale and paidAmount are already defined or retrieved
+            var totalSale = 100; // Example value, replace with your logic to get total sale
+            var paidAmount = 150; // Example value, replace with your logic to get paid amount
 
-            // Remove existing month parameters
-            urlParams.delete('month[]');
-
-            // Append the selected months
-            selectedMonths.forEach(month => {
-                urlParams.append('month[]', month);
+            // Make an Ajax request to trigger the checkout action
+            $.ajax({
+                url: '{{ route("checkout") }}', // Assuming this is the route to your checkout method
+                method: 'POST',
+                data: { total_sale: totalSale, change: paidAmount },
+                success: function(response) {
+                    // Open a new tab and display the PDF content
+                    let newWindow = window.open('', '_blank');
+                    newWindow.document.write('<embed width="100%" height="100%" type="application/pdf" src="data:application/pdf;base64,' + response + '" />');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error generating PDF:', error);
+                    alert('Error generating PDF. Please try again.');
+                }
             });
-
-            // Reload the page with updated URL parameters
-            window.location.href = '?' + urlParams.toString();
         });
-    });
-
-    // Handle "All" checkbox
-    allCheckbox.addEventListener('change', () => {
-        if (allCheckbox.checked) {
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = true;
-            });
-        } else {
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-        }
-
-        // Reload the page with no month parameters when "All" is checked
-        window.location.href = '{{ route("features.onsitesales") }}';
     });
 </script>
 
