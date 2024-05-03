@@ -202,7 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const url = URL.createObjectURL(blob);
 
             // Open the PDF content in a new tab/window
-            window.open(url, '_blank');
+            const newTab = window.open(url, '_blank');
+            if (!newTab) {
+                // Handle popup blocker or unable to open new tab
+                alert('Please allow pop-ups for this website to view the receipt.');
+            }
 
             // Clean up the Blob URL after use
             URL.revokeObjectURL(url);
