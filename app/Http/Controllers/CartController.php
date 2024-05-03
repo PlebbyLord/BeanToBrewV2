@@ -69,7 +69,7 @@ class CartController extends Controller
     public function destroy(Cart $cart)
     {
         $cart->delete();
-        return redirect()->route('Features.cart')->with('success', 'Item deleted successfully.');
+        return redirect()->route('features.cart')->with('success', 'Item deleted successfully.');
     }
 
     public function addToCart(Request $request)
@@ -124,7 +124,7 @@ class CartController extends Controller
             $cart->save();
         }
 
-        return redirect()->route('Features.cart')->with('success', 'Item added to cart successfully.');
+        return redirect()->route('features.cart')->with('success', 'Item added to cart successfully.');
     }
 
     public function updateQuantity(Request $request)

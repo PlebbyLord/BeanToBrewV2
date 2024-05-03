@@ -147,7 +147,7 @@ class CheckoutController extends Controller
             $updatedCart = Cart::where('user_id', $user_id)->get();
 
             // save record for dataset model copy
-            Dataset::create(['salse_date'=>Carbon::parse($updatedCart->updated_at)->format('y-m-d'), 'coffee_type'=> $updatedCart->item_name, 'coffee_form'=>'','sales_kg'=>$updatedCart->quantity, 'price_per_kilo'=>$updatedCart->item_price]);
+            Dataset::create(['salse_date'=>Carbon::parse($updatedCart->created_at)->format('y-m-d'), 'coffee_type'=> $updatedCart->item_name, 'coffee_form'=>'','sales_kg'=>$updatedCart->quantity, 'price_per_kilo'=>$updatedCart->item_price]);
     
 
         // Pass order information and cart details to the view
