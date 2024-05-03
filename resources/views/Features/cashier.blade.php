@@ -159,6 +159,7 @@
                                                         <input type="hidden" name="total_sale" value="{{ $totalSale }}">
                                                         <button type="submit" class="btn btn-primary mt-3">Checkout</button>
                                                     </form>
+                                                    <div id="checkoutMessage"></div> <!-- Placeholder for displaying success/error messages -->
                                                 </div>  
                                             </div>
                                         </div>
@@ -189,23 +190,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: new FormData(checkoutForm)
             })
-            .then(response => response.blob())
+            .then(response => {
+                if (response.ok) {
+                    return response.blob(); // Proceed with getting the PDF blob
+                } else {
+                    throw new Error('Checkout failed'); // Handle non-successful response
+                }
+            })
             .then(blob => {
+                // Update the page (e.g., display success message) before opening PDF
+                const successMessage = 'Checkout successful!';
+                document.getElementById('checkoutMessage').innerText = successMessage;
+
                 // Create a Blob URL for the returned PDF content
                 const url = URL.createObjectURL(blob);
 
                 // Open the generated PDF in a new tab
-                window.open(url, '_blank');
+                const newTab = window.open(url, '_blank');
 
                 // Clean up the Blob URL after use
                 URL.revokeObjectURL(url);
 
-                // Optionally, redirect back or show success message after opening PDF
-                // You can handle redirect or display success message as needed
-                // window.location.href = '/success'; // Example redirect
+                // Reload the page after opening PDF to refresh the UI
+                newTab.onload = function() {
+                    window.location.reload(); // Reload the page
+                };
             })
             .catch(error => {
                 console.error('Error:', error);
+                const errorMessage = 'Checkout failed. Please try again.';
+                document.getElementById('checkoutMessage').innerText = errorMessage;
             });
         });
     });
