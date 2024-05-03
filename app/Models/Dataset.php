@@ -9,4 +9,9 @@ class Dataset extends Model
 {
     use HasFactory;
     protected $fillable = ['sales_date', 'coffee_type', 'coffee_form', 'sales_kg', 'price_per_kilo'];
+
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class, 'coffee_type', 'coffee_type');
+    }
 }
