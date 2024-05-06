@@ -158,27 +158,32 @@
 
 @section('scripts')
 <script>
+    // Function to handle filter changes
+    function handleFilterChange() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const selectedTypes = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked && checkbox.value !== "all")
+            .map(checkbox => checkbox.value);
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Remove existing schedule type parameters
+        urlParams.delete('schedule_type[]');
+
+        // Append the selected schedule types to URL parameters
+        selectedTypes.forEach(type => {
+            urlParams.append('schedule_type[]', type);
+        });
+
+        // Update URL without reloading the page
+        history.replaceState(null, '', '?' + urlParams.toString());
+    }
+
+    // Attach change event listener to filter checkboxes
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            if (checkbox.id === "all" && checkbox.checked) {
-                window.location.href = '{{ route("history1") }}';
-            } else {
-                const selectedTypes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
-                const urlParams = new URLSearchParams(window.location.search);
-                
-                // Remove existing schedule type parameters
-                urlParams.delete('schedule_type[]');
-
-                // Append the selected schedule types
-                selectedTypes.forEach(type => {
-                    urlParams.append('schedule_type[]', type);
-                });
-
-                // Reload the page with updated URL parameters
-                window.location.href = '?' + urlParams.toString();
-            }
-        });
+        checkbox.addEventListener('change', handleFilterChange);
     });
 </script>
 @endsection
+
