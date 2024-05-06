@@ -175,8 +175,12 @@
             urlParams.append('schedule_type[]', type);
         });
 
-        // Update URL without reloading the page
-        history.replaceState(null, '', '?' + urlParams.toString());
+        // Construct the new URL with filters
+        const baseUrl = window.location.href.split('?')[0];
+        const newUrl = baseUrl + '?' + urlParams.toString();
+
+        // Navigate to the new URL
+        window.location.href = newUrl;
     }
 
     // Attach change event listener to filter checkboxes
