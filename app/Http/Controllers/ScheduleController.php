@@ -289,7 +289,7 @@ class ScheduleController extends Controller
                                         ->exists();
     
         if (!$packagingCompleted) {
-            return redirect()->back()->withErrors(['packaging' => 'Packaging process must be completed before scheduling roasting.'])->withInput();
+            return redirect()->back()->withErrors(['hulling' => 'Hulling process must be completed before scheduling roasting.'])->withInput();
         }
     
         // Proceed to save the roasting schedule
