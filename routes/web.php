@@ -61,6 +61,10 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::post('/sched-start/{id}', [ScheduleController::class, 'schedStart'])->name('schedStart');
     Route::post('/update-progress/{id}', [ScheduleController::class, 'updateProgress'])->name('updateProgress');         
     Route::get('/completed', [ScheduleController::class, 'completed'])->name('completed');
+    Route::get('/completed1', [ScheduleController::class, 'completed1'])->name('completed1');
+    Route::get('/completed2', [ScheduleController::class, 'completed2'])->name('completed2');
+    Route::get('/completed3', [ScheduleController::class, 'completed3'])->name('completed3');
+    Route::get('/completed4', [ScheduleController::class, 'completed4'])->name('completed4');
     Route::get('/grind', [ScheduleController::class, 'grind'])->name('grind');
     Route::get('/pack', [ScheduleController::class, 'pack'])->name('pack');
     Route::get('/roast', [ScheduleController::class, 'roast'])->name('roast');

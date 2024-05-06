@@ -2,48 +2,29 @@
 
 @section('content')
 
-<style>
-    .completed {
-    color: green;
-}
-</style>
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-            <h5>Completed Schedules</h5>
-        </div> 
+<div class="container-fluid">
+    <div class="card mx-auto" style="max-width: 900px;">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span style="font-size: 18px; font-weight: bold;">Completed Schedule History</span>
+        </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Coffee Type</th>
-                            <th>Coffee Age</th>
-                            <th>Farm Location</th>
-                            <th>Batch Number</th>
-                            <th>Date Set</th>
-                            <th>Schedule Type</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($schedules as $schedule)
-                        <tr>
-                            <td>{{ $schedule->coffee_species }}</td>
-                            <td>{{ $schedule->age }}</td>
-                            <td>{{ $schedule->location }}</td>
-                            <td>{{ $schedule->batch_number }}</td>
-                            <td>{{ $schedule->Date_Set }}</td>
-                            <td>{{ $schedule->Schedule_Type }}</td>
-                            <td>
-                                @if($schedule->progress_status == 1)
-                                    <span class="completed">Completed</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('completed1') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Farm 1 Schedules</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('completed2') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Farm 2 Schedules</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('completed3') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Farm 3 Schedules</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('completed3') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Farm 4 Schedules</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

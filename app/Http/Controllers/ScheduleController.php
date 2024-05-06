@@ -35,7 +35,7 @@ class ScheduleController extends Controller
     {
         return view('Features.Schedules.harvest');
     }
-    
+
     public function history()
     {
         return view('Features.Schedules.history');
@@ -122,12 +122,52 @@ class ScheduleController extends Controller
 
     public function completed()
     {
-        $schedules = Schedule::where('progress_status', 2)->get();
-    
-        // Pass the data to the view and return it
-        return view('Features.Schedules.completed', compact('schedules'));
+        return view('Features.Schedules.completed');
     }
-    
+
+    public function completed1()
+    {
+        // Retrieve completed schedules (progress_status = 2) from 'Farm 1'
+        $schedules = Schedule::where('progress_status', 2)
+                            ->where('location', 'Farm 1')
+                            ->get();
+        
+        // Pass the data to the view and return it
+        return view('Features.Schedules.Completed.completed1', compact('schedules'));
+    }
+
+    public function completed2()
+    {
+        // Retrieve completed schedules (progress_status = 2) from 'Farm 1'
+        $schedules = Schedule::where('progress_status', 2)
+                            ->where('location', 'Farm 2')
+                            ->get();
+        
+        // Pass the data to the view and return it
+        return view('Features.Schedules.Completed.completed2', compact('schedules'));
+    }
+
+    public function completed3()
+    {
+        // Retrieve completed schedules (progress_status = 2) from 'Farm 1'
+        $schedules = Schedule::where('progress_status', 2)
+                            ->where('location', 'Farm 3')
+                            ->get();
+        
+        // Pass the data to the view and return it
+        return view('Features.Schedules.Completed.completed3', compact('schedules'));
+    }
+
+    public function completed4()
+    {
+        // Retrieve completed schedules (progress_status = 2) from 'Farm 1'
+        $schedules = Schedule::where('progress_status', 2)
+                            ->where('location', 'Farm 4')
+                            ->get();
+        
+        // Pass the data to the view and return it
+        return view('Features.Schedules.Completed.completed4', compact('schedules'));
+    }
 
     public function updateProgress(Request $request, $id)
     {
