@@ -83,7 +83,7 @@ class ScheduleController extends Controller
         }
     
         // Get the filtered schedules
-        $schedules = $query->get();
+        $schedules = $query->paginate(40);
         
         // Pass the data to the view
         return view('Features.Schedules.History.history2', compact('schedules'));
@@ -107,7 +107,7 @@ class ScheduleController extends Controller
         }
     
         // Get the filtered schedules
-        $schedules = $query->get();
+        $schedules = $query->paginate(40);
         
         // Pass the data to the view
         return view('Features.Schedules.History.history3', compact('schedules'));
@@ -131,7 +131,7 @@ class ScheduleController extends Controller
         }
     
         // Get the filtered schedules
-        $schedules = $query->get();
+        $schedules = $query->paginate(40);
         
         // Pass the data to the view
         return view('Features.Schedules.History.history4', compact('schedules'));
@@ -256,7 +256,7 @@ class ScheduleController extends Controller
         }
         
         // Get the filtered completed schedules
-        $schedules = $query->get();
+        $schedules = $query->paginate(40);
         
         // Pass the data to the view
         return view('Features.Schedules.Completed.completed1', compact('schedules'));
@@ -280,7 +280,7 @@ class ScheduleController extends Controller
         }
         
         // Get the filtered completed schedules
-        $schedules = $query->get();
+        $schedules = $query->paginate(40);
         
         // Pass the data to the view
         return view('Features.Schedules.Completed.completed2', compact('schedules'));
@@ -304,7 +304,7 @@ class ScheduleController extends Controller
         }
         
         // Get the filtered completed schedules
-        $schedules = $query->get();
+        $schedules = $query->paginate(40);
         
         // Pass the data to the view
         return view('Features.Schedules.Completed.completed3', compact('schedules'));
@@ -328,7 +328,7 @@ class ScheduleController extends Controller
         }
         
         // Get the filtered completed schedules
-        $schedules = $query->get();
+        $schedules = $query->paginate(40);
         
         // Pass the data to the view
         return view('Features.Schedules.Completed.completed4', compact('schedules'));
