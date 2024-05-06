@@ -20,6 +20,10 @@ class Cashier extends Model
         'item_price',
         'quantity',
     ];
-
+    
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class, 'purchase_id');
+    }
   
 }
