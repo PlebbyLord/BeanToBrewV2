@@ -58,8 +58,6 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Farm 2 History</h5>
-                <a href="{{ route('completed') }}" class="btn btn-primary">Completed Schedules</a>
-                <a href="{{ route('calendar') }}" class="btn btn-primary">Calendar</a>
             </div>               
             <div class="card-body">
                 <div class="table-responsive">
