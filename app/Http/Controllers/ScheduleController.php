@@ -238,7 +238,6 @@ class ScheduleController extends Controller
         $this->saveSingleSchedule($coffeeType, $scheduleType, $dateSet, $location, $batchNumber);
     }
     
-
     public function PackagingSave(Request $request)
     {
         // Validate the request
@@ -250,6 +249,22 @@ class ScheduleController extends Controller
         ], [
             'calendar.after_or_equal' => 'The selected date has already passed.',
         ]);
+    
+        // Check if the specified coffee species has been planted
+        $coffeeSpeciesExists = Schedule::where('coffee_species', $validatedData['coffeeType'])->exists();
+    
+        if (!$coffeeSpeciesExists) {
+            return redirect()->back()->withErrors(['coffeeType' => 'Coffee species has not been planted yet.'])->withInput();
+        }
+    
+        // Check if the entered batch number exists for the specified coffee species
+        $batchExists = Schedule::where('coffee_species', $validatedData['coffeeType'])
+                                ->where('batch_number', $validatedData['batchNumber'])
+                                ->exists();
+    
+        if (!$batchExists) {
+            return redirect()->back()->withErrors(['batchNumber' => 'Batch number does not exist for the selected coffee type.'])->withInput();
+        }
     
         // Check if hulling has been completed for the specified batch
         $hullingCompleted = Schedule::where('coffee_species', $validatedData['coffeeType'])
@@ -281,6 +296,22 @@ class ScheduleController extends Controller
             'calendar.after_or_equal' => 'The selected date has already passed.',
         ]);
     
+        // Check if the specified coffee species has been planted
+        $coffeeSpeciesExists = Schedule::where('coffee_species', $validatedData['coffeeType'])->exists();
+    
+        if (!$coffeeSpeciesExists) {
+            return redirect()->back()->withErrors(['coffeeType' => 'Coffee species has not been planted yet.'])->withInput();
+        }
+    
+        // Check if the entered batch number exists for the specified coffee species
+        $batchExists = Schedule::where('coffee_species', $validatedData['coffeeType'])
+                                ->where('batch_number', $validatedData['batchNumber'])
+                                ->exists();
+    
+        if (!$batchExists) {
+            return redirect()->back()->withErrors(['batchNumber' => 'Batch number does not exist for the selected coffee type.'])->withInput();
+        }
+    
         // Check if packaging has been completed for the specified batch
         $packagingCompleted = Schedule::where('coffee_species', $validatedData['coffeeType'])
                                         ->where('batch_number', $validatedData['batchNumber'])
@@ -310,6 +341,22 @@ class ScheduleController extends Controller
         ], [
             'calendar.after_or_equal' => 'The selected date has already passed.',
         ]);
+    
+        // Check if the specified coffee species has been planted
+        $coffeeSpeciesExists = Schedule::where('coffee_species', $validatedData['coffeeType'])->exists();
+    
+        if (!$coffeeSpeciesExists) {
+            return redirect()->back()->withErrors(['coffeeType' => 'Coffee species has not been planted yet.'])->withInput();
+        }
+    
+        // Check if the entered batch number exists for the specified coffee species
+        $batchExists = Schedule::where('coffee_species', $validatedData['coffeeType'])
+                                ->where('batch_number', $validatedData['batchNumber'])
+                                ->exists();
+    
+        if (!$batchExists) {
+            return redirect()->back()->withErrors(['batchNumber' => 'Batch number does not exist for the selected coffee type.'])->withInput();
+        }
     
         // Check if roasting has been completed for the specified batch
         $roastingCompleted = Schedule::where('coffee_species', $validatedData['coffeeType'])
