@@ -160,7 +160,7 @@
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
             if (checkbox.id === "all" && checkbox.checked) {
-                window.location.href = '{{ route("features.history1") }}';
+                window.location.href = '{{ route("history1") }}';
             } else {
                 const selectedTypes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
                 const urlParams = new URLSearchParams(window.location.search);
