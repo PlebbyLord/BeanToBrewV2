@@ -191,7 +191,31 @@
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', handleFilterChange);
     });
+
+    // Function to handle pagination clicks while preserving filters
+    function handlePaginationClick(pageNumber) {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Update the 'page' parameter with the clicked page number
+        urlParams.set('page', pageNumber);
+
+        // Construct the new URL with updated pagination
+        const baseUrl = window.location.href.split('?')[0];
+        const newUrl = baseUrl + '?' + urlParams.toString();
+
+        // Navigate to the new URL
+        window.location.href = newUrl;
+    }
+
+    // Attach click event listener to pagination links
+    const paginationLinks = document.querySelectorAll('.pagination a');
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            const pageNumber = link.getAttribute('href').split('page=')[1];
+            handlePaginationClick(pageNumber);
+        });
+    });
 </script>
 @endsection
-
 
