@@ -208,7 +208,7 @@ class CashierController extends Controller
             $purchase->save();
 
             // save record for dataset model copy
-            Dataset::create(['sales_date'=>Carbon::parse($ch->created_at)->format('y-m-d'), 'coffee_type'=> $ch->item_name, 'coffee_form'=>'','sales_kg'=>$ch->quantity, 'price_per_kilo'=>12.77]);
+            Dataset::create(['sales_date'=>Carbon::parse($ch->created_at)->format('y-m-d'), 'coffee_type'=> $ch->item_name, 'coffee_form'=>$ch->purchase->coffee_type,'sales_kg'=>$ch->quantity, 'price_per_kilo'=>$ch->item_price]);
     
         }
     
