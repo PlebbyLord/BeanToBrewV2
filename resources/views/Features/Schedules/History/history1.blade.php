@@ -165,8 +165,7 @@
         // Reload the page with no schedule_type parameters when "All" is checked
         window.location.href = '{{ route("history1") }}';
     });
-</script>
-<script>
+
     $(document).ready(function() {
         $('form').on('submit', function() {
             $(this).closest('.modal').modal('hide');
