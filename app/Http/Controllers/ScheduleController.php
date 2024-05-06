@@ -41,14 +41,27 @@ class ScheduleController extends Controller
         return view('Features.Schedules.history');
     }
 
-    public function history1()
+    public function history1(Request $request)
     {
-        // Retrieve schedules where progress_status is 0 or 1 and location is 'Farm 1'
-        $schedules = Schedule::whereIn('progress_status', [0, 1])
-                              ->where('location', 'Farm 1')
-                              ->get();
+        // Retrieve selected schedule types from the request
+        $selectedScheduleTypes = $request->input('schedule_type');
+    
+        // Query schedules where progress_status is 0 or 1 and location is 'Farm 1'
+        $query = Schedule::whereIn('progress_status', [0, 1])
+                         ->where('location', 'Farm 1');
+    
+        // If specific schedule types are selected, filter by them
+        if (!empty($selectedScheduleTypes) && in_array('all', $selectedScheduleTypes)) {
+            // If 'All' is selected, no need to filter further
+        } elseif (!empty($selectedScheduleTypes)) {
+            // Filter schedules by selected schedule types
+            $query->whereIn('Schedule_Type', $selectedScheduleTypes);
+        }
+    
+        // Get the filtered schedules
+        $schedules = $query->get();
         
-        // Pass the data to the view and return it
+        // Pass the data to the view
         return view('Features.Schedules.History.history1', compact('schedules'));
     }
 
