@@ -69,6 +69,10 @@ Route::middleware(['checkUserRole'])->group(function () {
     Route::get('/pack', [ScheduleController::class, 'pack'])->name('pack');
     Route::get('/roast', [ScheduleController::class, 'roast'])->name('roast');
     Route::get('/calendar', [ScheduleController::class, 'calendar'])->name('calendar');
+    Route::get('/calendar1', [ScheduleController::class, 'calendar1'])->name('calendar1');
+    Route::get('/calendar2', [ScheduleController::class, 'calendar2'])->name('calendar2');
+    Route::get('/calendar3', [ScheduleController::class, 'calendar3'])->name('calendar3');
+    Route::get('/calendar4', [ScheduleController::class, 'calendar4'])->name('calendar4');
     Route::get('/inventory', [App\Http\Controllers\InventoryController::class, 'index'])->name('features.inventory');
     Route::get('/users', [App\Http\Controllers\UsersController::class, 'index'])->name('features.users');
     Route::get('/users/admins', [App\Http\Controllers\UsersController::class, 'admins'])->name('features.admins');

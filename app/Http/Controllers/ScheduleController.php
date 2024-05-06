@@ -102,8 +102,13 @@ class ScheduleController extends Controller
 
     public function calendar()
     {
-        // Fetch all events from the schedules table
-        $schedules = Schedule::all();
+        return view('Features.Schedules.calendar');
+    }
+
+    public function calendar1()
+    {
+        // Fetch all events from the schedules table where location is 'Farm 1'
+        $schedules = Schedule::where('location', 'Farm 1')->get();
         
         // Format events for FullCalendar
         $events = [];
@@ -116,10 +121,66 @@ class ScheduleController extends Controller
         }
         
         // Pass events data to the view
-        return view('Features.Schedules.calendar', compact('events'));
-    }    
-    
+        return view('Features.Schedules.Calendar.calendar1', compact('events'));
+    }
 
+    public function calendar2()
+    {
+        // Fetch all events from the schedules table where location is 'Farm 1'
+        $schedules = Schedule::where('location', 'Farm 2')->get();
+        
+        // Format events for FullCalendar
+        $events = [];
+        foreach ($schedules as $schedule) {
+            $events[] = [
+                'title' => $schedule->Schedule_Type,
+                'start' => $schedule->Date_Set, // Assuming Date_Set is in the correct format
+                'color' => $schedule->progress_status == 0 ? '#ff0000' : '#00ff00', // Red for 0, Green for 1
+            ];
+        }
+        
+        // Pass events data to the view
+        return view('Features.Schedules.Calendar.calendar2', compact('events'));
+    }
+
+    public function calendar3()
+    {
+        // Fetch all events from the schedules table where location is 'Farm 1'
+        $schedules = Schedule::where('location', 'Farm 3')->get();
+        
+        // Format events for FullCalendar
+        $events = [];
+        foreach ($schedules as $schedule) {
+            $events[] = [
+                'title' => $schedule->Schedule_Type,
+                'start' => $schedule->Date_Set, // Assuming Date_Set is in the correct format
+                'color' => $schedule->progress_status == 0 ? '#ff0000' : '#00ff00', // Red for 0, Green for 1
+            ];
+        }
+        
+        // Pass events data to the view
+        return view('Features.Schedules.Calendar.calendar3', compact('events'));
+    }
+
+    public function calendar4()
+    {
+        // Fetch all events from the schedules table where location is 'Farm 1'
+        $schedules = Schedule::where('location', 'Farm 4')->get();
+        
+        // Format events for FullCalendar
+        $events = [];
+        foreach ($schedules as $schedule) {
+            $events[] = [
+                'title' => $schedule->Schedule_Type,
+                'start' => $schedule->Date_Set, // Assuming Date_Set is in the correct format
+                'color' => $schedule->progress_status == 0 ? '#ff0000' : '#00ff00', // Red for 0, Green for 1
+            ];
+        }
+        
+        // Pass events data to the view
+        return view('Features.Schedules.Calendar.calendar4', compact('events'));
+    }
+        
     public function completed()
     {
         return view('Features.Schedules.completed');
@@ -179,27 +240,36 @@ class ScheduleController extends Controller
         // Find the schedule by ID
         $schedule = Schedule::findOrFail($id);
     
-        // Check if the schedule is in progress and is for harvesting
-        if ($schedule->progress_status == 1 && $schedule->Schedule_Type === 'Harvesting') {
-            // Create a new harvest record associated with the schedule
-            $harvest = new Harvest();
-            $harvest->schedule_id = $schedule->id;
-            $harvest->coffee_type = $schedule->coffee_species;
-            $harvest->kilos_harvested = $validatedData['kilos_harvested'];
-            $harvest->save();
-
-            // save record for dataset model copy
-            Dataset::create(['sales_date'=>Carbon::parse($harvest->created_at)->format('y-m-d'), 'coffee_type'=> $harvest->coffee_type, 'coffee_form'=>'','sales_kg'=>$harvest->kilos_harvested, 'price_per_kilo'=>12.77]);
+        // Check if the schedule is in progress
+        if ($schedule->progress_status == 1) {
+            if ($schedule->Schedule_Type === 'Harvesting') {
+                // Create a new harvest record associated with the schedule
+                $harvest = new Harvest();
+                $harvest->schedule_id = $schedule->id;
+                $harvest->coffee_type = $schedule->coffee_species;
+                $harvest->kilos_harvested = $validatedData['kilos_harvested'];
+                $harvest->save();
+    
+                // Save record for dataset model copy
+                Dataset::create([
+                    'sales_date' => Carbon::parse($harvest->created_at)->format('y-m-d'),
+                    'coffee_type' => $harvest->coffee_type,
+                    'coffee_form' => '',
+                    'sales_kg' => $harvest->kilos_harvested,
+                    'price_per_kilo' => 12.77
+                ]);
+            }
     
             // Update progress status of the schedule to 2 (completed)
             $schedule->update(['progress_status' => 2]);
     
-            return redirect()->back()->with('success', 'Harvest information saved successfully.');
-        } else {
-            // Invalid operation, handle accordingly
-            return redirect()->back()->withErrors('Invalid operation.');
+            return redirect()->back()->with('success', 'Task completed successfully.');
         }
-    }    
+    
+        // Invalid operation, handle accordingly (though this part may not be needed in this scenario)
+        return redirect()->back()->withErrors('Invalid operation.');
+    }
+         
     
     public function schedStart($id)
     {
@@ -256,7 +326,7 @@ class ScheduleController extends Controller
         }
 
         // Schedule recurring tasks after each harvest
-        $harvestDate = $plantingDate->copy()->addYears(5); // Initial harvest date (5 years after planting)
+        $harvestDate = $plantingDate->copy()->addYears(4); // Initial harvest date (4 years after planting)
         while ($harvestDate->isBefore(Carbon::now()->addYears(10))) { // Set a long time span for recurring harvests
             // Schedule Harvesting
             $this->saveSingleSchedule($validatedData['coffeeType'], 'Harvesting', $harvestDate->format('Y-m-d'), $validatedData['location'], $batchNumber);

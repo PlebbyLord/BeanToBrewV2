@@ -2,53 +2,32 @@
 
 @section('content')
 
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-2">
-                    <a href="{{ route('features.schedule') }}" class="btn btn-sm btn-primary btn-lg px-4" style="font-size: 15px;">Back</a>
-                </div>
-                <div class="col-9 text-center">
-                    <h5>Schedules</h5>
-                </div>
-            </div>
-        </div> 
+<div class="container-fluid">
+    <div class="card mx-auto" style="max-width: 900px;">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span style="font-size: 18px; font-weight: bold;">Schedule Farm Calendar</span>
+        </div>
         <div class="card-body">
-            @if(session('success'))
-            <div class="alert alert-success" role="alert">
-                {{ session('success') }}
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('calendar1') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Farm 1 Calendar</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('calendar2') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Farm 2 Calendar</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('calendar3') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Farm 3 Calendar</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('calendar4') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Farm 4 Calendar</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            @endif
-            <div id="calendar"></div>
         </div>
     </div>
 </div>
-
-<!-- FullCalendar CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
-
-<!-- jQuery and Moment.js -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
-<!-- FullCalendar JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-
-<!-- Initialize FullCalendar -->
-<script>
-    $(document).ready(function () {
-        // Initialize the calendar
-        $('#calendar').fullCalendar({
-            selectable: true,
-            height: 'auto', // Adjust the height as needed
-            events: {!! json_encode($events) !!}, // Events data passed from the controller
-            eventRender: function(event, element) {
-                // Customize event rendering if needed
-                // For example, add tooltips or other customizations
-            }
-        });
-    });
-</script>
 
 @endsection

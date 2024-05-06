@@ -77,7 +77,7 @@
                 // Calculate the best year for harvest using linear regression
                 var bestYear = calculateBestHarvestYear(start);
                 // Display the best year for harvest
-                $('#bestHarvestYear').text('Best Year for Harvest: ' + bestYear);
+                $('#bestHarvestYear').text('Possible Year for Harvest: ' + bestYear);
             }
         });
     });
@@ -85,7 +85,7 @@
     // Function to calculate the best year for harvest using linear regression
     function calculateBestHarvestYear(selectedDate) {
         var plantingYear = selectedDate.year();
-        var bestYear = plantingYear + 5; // Adjust this based on your algorithm
+        var bestYear = plantingYear + 4; // Adjust this based on your algorithm
         return bestYear;
     }
 </script>

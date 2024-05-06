@@ -48,45 +48,43 @@
                                         @csrf
                                         <button type="submit" class="btn btn-danger">Start Task</button>
                                     </form>
-                                @else
-                                    @if($schedule->Schedule_Type === 'Harvesting')
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#harvestModal{{ $schedule->id }}">
-                                            Complete
-                                        </button>                           
+                                @elseif($schedule->progress_status == 1 && $schedule->Schedule_Type === 'Harvesting')
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#harvestModal{{ $schedule->id }}">
+                                        Complete
+                                    </button>                           
 
-                                        <!-- Harvest Modal -->
-                                        <div class="modal fade" id="harvestModal{{ $schedule->id }}" tabindex="-1" role="dialog" aria-labelledby="harvestModalLabel{{ $schedule->id }}" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="harvestModalLabel{{ $schedule->id }}">Complete Harvesting Schedule</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <!-- Harvesting completion form -->
-                                                        <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
-                                                            @csrf
-                                                            <div class="form-group">
-                                                                <label for="kilosHarvested">Enter Kilos Harvested:</label>
-                                                                <input type="number" class="form-control" id="kilosHarvested" name="kilos_harvested" required>
-                                                            </div>
-                                                            <button type="submit" class="btn btn-primary">Complete</button>
-                                                        </form>
-                                                    </div>
+                                    <!-- Harvest Modal -->
+                                    <div class="modal fade" id="harvestModal{{ $schedule->id }}" tabindex="-1" role="dialog" aria-labelledby="harvestModalLabel{{ $schedule->id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="harvestModalLabel{{ $schedule->id }}">Complete Harvesting Schedule</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- Harvesting completion form -->
+                                                    <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
+                                                        @csrf
+                                                        <div class="form-group">
+                                                            <label for="kilosHarvested">Enter Kilos Harvested:</label>
+                                                            <input type="number" class="form-control" id="kilosHarvested" name="kilos_harvested" required>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary">Complete</button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
-                                    @else
-                                        <!-- If Schedule_Type is not 'Harvesting', directly update progress_status -->
-                                        <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="kilos_harvested" value="0"> <!-- No need for input, set a dummy value -->
-                                            <button type="submit" class="btn btn-primary">Mark as Completed</button>
-                                        </form>
-                                    @endif
-                                @endif
+                                    </div>
+                                @else
+                                    <!-- For non-'Harvesting' schedules, directly update progress status -->
+                                    <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="kilos_harvested" value="0"> <!-- No need for input, set a dummy value -->
+                                        <button type="submit" class="btn btn-primary">Mark as Completed</button>
+                                    </form>
+                                @endif                                                     
                             </td>
                         </tr>
                         @endforeach
