@@ -36,7 +36,7 @@
                             <td>{{ $schedule->Date_Set }}</td>
                             <td>{{ $schedule->Schedule_Type }}</td>
                             <td>
-                                @if($schedule->progress_status == 1)
+                                @if($schedule->progress_status == 2)
                                     <span class="completed">Completed</span>
                                 @endif
                             </td>
