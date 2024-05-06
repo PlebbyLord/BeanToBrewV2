@@ -145,6 +145,10 @@
                         </tbody>
                     </table>
                 </div>
+                                <!-- Pagination links -->
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $schedules->links() }}
+                                </div>
             </div>
         </div>
     </div>

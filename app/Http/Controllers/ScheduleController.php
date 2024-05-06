@@ -59,7 +59,7 @@ class ScheduleController extends Controller
         }
     
         // Get the filtered schedules
-        $schedules = $query->get();
+        $schedules = $query->paginate(20);
         
         // Pass the data to the view
         return view('Features.Schedules.History.history1', compact('schedules'));
