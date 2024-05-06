@@ -117,4 +117,34 @@
         });
     });
 </script>
+
+<!-- Additional script to handle checkbox filtering -->
+<script>
+    // Function to handle checkbox filtering
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                if (checkbox.id === "all" && checkbox.checked) {
+                    window.location.href = '{{ route("features.history1") }}';
+                } else {
+                    const selectedTypes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+                    const urlParams = new URLSearchParams(window.location.search);
+                    
+                    // Remove existing schedule type parameters
+                    urlParams.delete('schedule_type[]');
+
+                    // Append the selected schedule types
+                    selectedTypes.forEach(type => {
+                        urlParams.append('schedule_type[]', type);
+                    });
+
+                    // Reload the page with updated URL parameters
+                    window.location.href = '?' + urlParams.toString();
+                }
+            });
+        });
+    });
+</script>
 @endsection
