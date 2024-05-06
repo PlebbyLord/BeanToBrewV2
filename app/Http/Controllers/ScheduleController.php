@@ -360,7 +360,7 @@ class ScheduleController extends Controller
                     'coffee_type' => $harvest->coffee_type,
                     'coffee_form' => '',
                     'sales_kg' => $harvest->kilos_harvested,
-                    'price_per_kilo' => 400
+                    'price_per_kilo' => 350
                 ]);
             }
     
