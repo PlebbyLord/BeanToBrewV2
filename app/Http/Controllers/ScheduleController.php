@@ -8,6 +8,8 @@ use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ScheduleNotificationMail;
 
 class ScheduleController extends Controller
 {
@@ -61,8 +63,23 @@ class ScheduleController extends Controller
 
     public function calendar()
     {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+    
         // Fetch all events from the schedules table
         $schedules = Schedule::all();
+        
+        // Check for schedules that match today's date
+        $today = now()->toDateString();
+        $matchingSchedules = $schedules->filter(function ($schedule) use ($today) {
+            return $schedule->Date_Set === $today;
+        });
+        
+        // Process matching schedules
+        foreach ($matchingSchedules as $schedule) {
+            // Send notification email to authenticated user
+            Mail::to($user->email)->send(new ScheduleNotificationMail($schedule->Schedule_Type));
+        }
         
         // Format events for FullCalendar
         $events = [];
@@ -76,7 +93,7 @@ class ScheduleController extends Controller
         
         // Pass events data to the view
         return view('Features.Schedules.calendar', compact('events'));
-    }    
+    }
     
 
     public function completed()
