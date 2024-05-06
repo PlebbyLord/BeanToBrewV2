@@ -269,7 +269,6 @@ class ScheduleController extends Controller
         // Invalid operation, handle accordingly (though this part may not be needed in this scenario)
         return redirect()->back()->withErrors('Invalid operation.');
     }
-         
     
     public function schedStart($id)
     {
