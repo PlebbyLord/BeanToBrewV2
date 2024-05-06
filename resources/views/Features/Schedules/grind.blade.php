@@ -2,6 +2,16 @@
 
 @section('content')
 
+@if($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="container mt-4">
     <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-header">
