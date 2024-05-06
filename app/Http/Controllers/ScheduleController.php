@@ -40,15 +40,20 @@ class ScheduleController extends Controller
     {
         return view('Features.Schedules.history');
     }
-
-    public function history1()
+    public function history1(Request $request)
     {
-        // Retrieve schedules where progress_status is 0 or 1 and location is 'Farm 1'
+        // Validate the request
+        $request->validate([
+            'schedule_type' => 'required|in:Planting,Watering,MonthlyChecks,Pesticide Spraying,Harvesting,Pulping,Fermenting,Drying,Hulling,Sorting,Pruning,Packaging,Roasting,Grinding'
+        ]);
+    
+        // Retrieve schedules based on the provided schedule type and location 'Farm 1'
         $schedules = Schedule::whereIn('progress_status', [0, 1])
                               ->where('location', 'Farm 1')
+                              ->where('Schedule_Type', $request->schedule_type)
                               ->get();
         
-        // Pass the data to the view and return it
+        // Pass the data to the view
         return view('Features.Schedules.History.history1', compact('schedules'));
     }
 

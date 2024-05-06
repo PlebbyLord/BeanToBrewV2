@@ -2,15 +2,70 @@
 
 @section('content')
 
+<style>
+    #filterCard {
+        position: fixed;
+        top: 66px;
+        left: 0px; /* Position on the left side */
+        width: 150px;
+        padding: 20px;
+        background-color: #f4d693; /* Set background color to white */
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Add a border for visibility */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+        z-index: 1000; /* Ensure it appears above other content */
+    }
+    .container {
+        margin-left: 150px; /* Adjust margin-left to move the content to the right */
+    }
+    .card-columns {
+        margin-top: 20px; /* Adjust top margin for spacing */
+    }
+    .card-footer {
+        background-color: #f8f9fa;
+        text-align: right;
+        font-weight: bold;
+    }
+    .form-group {
+        margin-bottom: 10px; /* Adjust margin bottom for spacing between form elements */
+    }
+    .form-control {
+        width: 600px; /* Adjust width of form controls */
+    }
+    .btn-primary {
+        padding: 5px 10px; /* Adjust padding of the button */
+        font-size: 14px; /* Adjust font size of the button text */
+    }
+</style>
+
+<div id="filterCard">
+    <form id="filterForm">
+        <div>
+            <label for="schedule_type">Filter by Schedule Type:</label><br>
+            <input type="checkbox" id="all" name="schedule_type[]" value="all">
+            <label for="all">All</label><br>
+            @foreach([
+                'Planting', 'Watering', 'MonthlyChecks', 'Pesticide Spraying', 'Harvesting',
+                'Pulping', 'Fermenting', 'Drying', 'Hulling', 'Sorting', 'Pruning', 'Packaging',
+                'Roasting', 'Grinding'
+            ] as $type)
+                <input type="checkbox" id="{{ strtolower(str_replace(' ', '', $type)) }}" name="schedule_type[]" value="{{ $type }}">
+                <label for="{{ strtolower(str_replace(' ', '', $type)) }}">{{ $type }}</label><br>
+            @endforeach
+        </div>
+    </form>
+</div>
+
 <div class="container mt-4">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5>Farm 1 History</h5>
             <a href="{{ route('completed') }}" class="btn btn-primary">Completed Schedules</a>
             <a href="{{ route('calendar') }}" class="btn btn-primary">Calendar</a>
-        </div>               
+        </div>
+        <!-- Schedule Type Filter Card -->
         <div class="card-body">
-            <div class="table-responsive">
+            <!-- Table for displaying filtered schedules -->
+            <div class="table-responsive mt-4">
                 <table class="table">
                     <thead>
                         <tr>
@@ -56,29 +111,29 @@
                                             Complete
                                         </button>
                                         <!-- Harvest Modal -->
-                                            <div class="modal fade" id="harvestModal{{ $schedule->id }}" tabindex="-1" role="dialog" aria-labelledby="harvestModalLabel{{ $schedule->id }}" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="harvestModalLabel{{ $schedule->id }}">Complete Harvesting Schedule</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <!-- Harvesting completion form -->
-                                                            <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
-                                                                @csrf
-                                                                <div class="form-group">
-                                                                    <label for="kilosHarvested">Enter Kilos Harvested:</label>
-                                                                    <input type="number" class="form-control" id="kilosHarvested" name="kilos_harvested" required>
-                                                                </div>
-                                                                <button type="submit" class="btn btn-primary">Complete</button>
-                                                            </form>
-                                                        </div>
+                                        <div class="modal fade" id="harvestModal{{ $schedule->id }}" tabindex="-1" role="dialog" aria-labelledby="harvestModalLabel{{ $schedule->id }}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="harvestModalLabel{{ $schedule->id }}">Complete Harvesting Schedule</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!-- Harvesting completion form -->
+                                                        <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
+                                                            @csrf
+                                                            <div class="form-group">
+                                                                <label for="kilosHarvested">Enter Kilos Harvested:</label>
+                                                                <input type="number" class="form-control" id="kilosHarvested" name="kilos_harvested" required>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary">Complete</button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
                                     @else
                                         <!-- Directly mark as completed -->
                                         <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
@@ -107,8 +162,46 @@
 <!-- Ensure jQuery and Bootstrap JS scripts are loaded -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<!-- JavaScript for handling schedule type filtering -->
+<script>
+    // Handle schedule type filtering
+    const checkboxes = document.querySelectorAll('input[name="schedule_type[]"]');
+    const allCheckbox = document.getElementById('all');
 
-<!-- Your script to close modal after form submission -->
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const selectedTypes = Array.from(document.querySelectorAll('input[name="schedule_type[]"]:checked')).map(checkbox => checkbox.value);
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Remove existing schedule_type parameters
+            urlParams.delete('schedule_type[]');
+
+            // Append the selected schedule types
+            selectedTypes.forEach(type => {
+                urlParams.append('schedule_type[]', type);
+            });
+
+            // Reload the page with updated URL parameters
+            window.location.href = '?' + urlParams.toString();
+        });
+    });
+
+    // Handle "All" checkbox
+    allCheckbox.addEventListener('change', () => {
+        if (allCheckbox.checked) {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        } else {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        // Reload the page with no schedule_type parameters when "All" is checked
+        window.location.href = '{{ route("history1") }}';
+    });
+</script>
 <script>
     $(document).ready(function() {
         $('form').on('submit', function() {
