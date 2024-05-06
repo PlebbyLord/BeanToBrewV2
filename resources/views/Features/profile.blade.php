@@ -40,7 +40,8 @@
                     
                         <div class="mb-3">
                             <label for="mobile_number">Mobile Number</label>
-                            <input type="number" name="mobile_number" class="form-control" value="{{ auth()->user()->mobile_number }}">
+                            <input type="text" name="mobile_number" class="form-control" value="{{ auth()->user()->mobile_number }}" 
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);">
                         </div>
                     
                         <div class="mb-3">
@@ -62,4 +63,13 @@
     </div>
 </div>
     
+<script>
+    // JavaScript function to restrict input to numeric characters and limit length to 11 characters
+    function validateForm() {
+        var mobileNumberInput = document.getElementsByName('mobile_number')[0];
+        mobileNumberInput.value = mobileNumberInput.value.replace(/[^0-9]/g, '').slice(0, 11);
+        return true; // or return false based on additional validation logic
+    }
+</script>
+
 @endsection
