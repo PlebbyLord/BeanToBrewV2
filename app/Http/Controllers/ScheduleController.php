@@ -239,68 +239,6 @@ class ScheduleController extends Controller
     }
     
 
-    public function GrindingSave(Request $request)
-    {
-        // Validate the request
-        $validatedData = $request->validate([
-            'coffeeType' => 'required|in:arabica,excelsa,liberica,robusta',
-            'batchNumber' => 'required|integer',
-            'calendar' => 'required|date|after_or_equal:today', // Ensure the date is not in the past
-            'location' => 'required|in:Farm 1,Farm 2,Farm 3,Farm 4', // Validate the location
-        ], [
-            'calendar.after_or_equal' => 'The selected date has already passed.',
-        ]);
-    
-        // Check if the entered batch number exists for the selected coffee species
-        $batchExists = Schedule::where('coffee_species', $validatedData['coffeeType'])
-                            ->where('batch_number', $validatedData['batchNumber'])
-                            ->exists();
-    
-        // If batch number doesn't exist for the selected coffee species, display an error message
-        if (!$batchExists) {
-            return redirect()->back()->withErrors(['batchNumber' => 'Batch number does not exist for the selected coffee type.'])->withInput();
-        }
-    
-        // Check if the coffee species has been planted yet
-        $speciesPlanted = Schedule::where('coffee_species', $validatedData['coffeeType'])->exists();
-    
-        // If coffee species hasn't been planted yet, display an error message
-        if (!$speciesPlanted) {
-            return redirect()->back()->withErrors(['coffeeType' => 'Coffee bean species has not been planted yet.'])->withInput();
-        }
-    
-        // If batch number exists, date is valid, and coffee species has been planted, proceed to save the schedule to the database
-    
-        // Calculate the age based on the current date and the date of planting
-        $plantingDate = Schedule::where('coffee_species', $validatedData['coffeeType'])
-                                ->where('batch_number', $validatedData['batchNumber'])
-                                ->where('Schedule_Type', 'Planting')
-                                ->value('Date_Set');
-    
-        // If the planting date is not found, display an error message
-        if (!$plantingDate) {
-            return redirect()->back()->withErrors(['batchNumber' => 'No planting record found for the specified batch number.'])->withInput();
-        }
-    
-        // Calculate the age of the coffee plants
-        $age = Carbon::parse($validatedData['calendar'])->diffInYears($plantingDate);
-    
-        // Save the schedule to the database
-        $schedule = new Schedule();
-        $schedule->coffee_species = $validatedData['coffeeType'];
-        $schedule->Date_Set = $validatedData['calendar'];
-        $schedule->Schedule_Type = 'Grinding';
-        $schedule->batch_number = $validatedData['batchNumber'];
-        $schedule->progress_status = 0;
-        $schedule->user_id = Auth::id(); 
-        $schedule->age = $age; // Set the age
-        $schedule->location = $validatedData['location']; // Set the location
-        $schedule->save();
-    
-        // Redirect or respond accordingly
-        return redirect()->back()->with('success', 'Schedule saved successfully.');
-    }
-
     public function PackagingSave(Request $request)
     {
         // Validate the request
@@ -313,56 +251,24 @@ class ScheduleController extends Controller
             'calendar.after_or_equal' => 'The selected date has already passed.',
         ]);
     
-        // Check if the entered batch number exists for the selected coffee species
-        $batchExists = Schedule::where('coffee_species', $validatedData['coffeeType'])
-                            ->where('batch_number', $validatedData['batchNumber'])
-                            ->exists();
+        // Check if hulling has been completed for the specified batch
+        $hullingCompleted = Schedule::where('coffee_species', $validatedData['coffeeType'])
+                                    ->where('batch_number', $validatedData['batchNumber'])
+                                    ->where('Schedule_Type', 'Hulling')
+                                    ->where('progress_status', 2) // Check if hulling is completed
+                                    ->exists();
     
-        // If batch number doesn't exist for the selected coffee species, display an error message
-        if (!$batchExists) {
-            return redirect()->back()->withErrors(['batchNumber' => 'Batch number does not exist for the selected coffee type.'])->withInput();
+        if (!$hullingCompleted) {
+            return redirect()->back()->withErrors(['hulling' => 'Hulling process must be completed before scheduling packaging.'])->withInput();
         }
     
-        // Check if the coffee species has been planted yet
-        $speciesPlanted = Schedule::where('coffee_species', $validatedData['coffeeType'])->exists();
-    
-        // If coffee species hasn't been planted yet, display an error message
-        if (!$speciesPlanted) {
-            return redirect()->back()->withErrors(['coffeeType' => 'Coffee bean species has not been planted yet.'])->withInput();
-        }
-    
-        // If batch number exists, date is valid, and coffee species has been planted, proceed to save the schedule to the database
-    
-        // Calculate the age based on the current date and the date of planting
-        $plantingDate = Schedule::where('coffee_species', $validatedData['coffeeType'])
-                                ->where('batch_number', $validatedData['batchNumber'])
-                                ->where('Schedule_Type', 'Planting')
-                                ->value('Date_Set');
-    
-        // If the planting date is not found, display an error message
-        if (!$plantingDate) {
-            return redirect()->back()->withErrors(['batchNumber' => 'No planting record found for the specified batch number.'])->withInput();
-        }
-    
-        // Calculate the age of the coffee plants
-        $age = Carbon::parse($validatedData['calendar'])->diffInYears($plantingDate);
-    
-        // Save the schedule to the database
-        $schedule = new Schedule();
-        $schedule->coffee_species = $validatedData['coffeeType'];
-        $schedule->Date_Set = $validatedData['calendar'];
-        $schedule->Schedule_Type = 'Packaging';
-        $schedule->batch_number = $validatedData['batchNumber'];
-        $schedule->progress_status = 0;
-        $schedule->user_id = Auth::id(); 
-        $schedule->age = $age; // Set the age
-        $schedule->location = $validatedData['location']; // Set the location
-        $schedule->save();
+        // Proceed to save the packaging schedule
+        $this->saveSingleSchedule($validatedData['coffeeType'], 'Packaging', $validatedData['calendar'], $validatedData['location'], $validatedData['batchNumber']);
     
         // Redirect or respond accordingly
-        return redirect()->back()->with('success', 'Schedule saved successfully.');
+        return redirect()->back()->with('success', 'Packaging schedule saved successfully.');
     }
-
+    
     public function RoastingSave(Request $request)
     {
         // Validate the request
@@ -375,53 +281,52 @@ class ScheduleController extends Controller
             'calendar.after_or_equal' => 'The selected date has already passed.',
         ]);
     
-        // Check if the entered batch number exists for the selected coffee species
-        $batchExists = Schedule::where('coffee_species', $validatedData['coffeeType'])
-                            ->where('batch_number', $validatedData['batchNumber'])
-                            ->exists();
+        // Check if packaging has been completed for the specified batch
+        $packagingCompleted = Schedule::where('coffee_species', $validatedData['coffeeType'])
+                                        ->where('batch_number', $validatedData['batchNumber'])
+                                        ->where('Schedule_Type', 'Hulling')
+                                        ->where('progress_status', 2) // Check if packaging is completed
+                                        ->exists();
     
-        // If batch number doesn't exist for the selected coffee species, display an error message
-        if (!$batchExists) {
-            return redirect()->back()->withErrors(['batchNumber' => 'Batch number does not exist for the selected coffee type.'])->withInput();
+        if (!$packagingCompleted) {
+            return redirect()->back()->withErrors(['packaging' => 'Packaging process must be completed before scheduling roasting.'])->withInput();
         }
     
-        // Check if the coffee species has been planted yet
-        $speciesPlanted = Schedule::where('coffee_species', $validatedData['coffeeType'])->exists();
-    
-        // If coffee species hasn't been planted yet, display an error message
-        if (!$speciesPlanted) {
-            return redirect()->back()->withErrors(['coffeeType' => 'Coffee bean species has not been planted yet.'])->withInput();
-        }
-    
-        // If batch number exists, date is valid, and coffee species has been planted, proceed to save the schedule to the database
-    
-        // Calculate the age based on the current date and the date of planting
-        $plantingDate = Schedule::where('coffee_species', $validatedData['coffeeType'])
-                                ->where('batch_number', $validatedData['batchNumber'])
-                                ->where('Schedule_Type', 'Planting')
-                                ->value('Date_Set');
-    
-        // If the planting date is not found, display an error message
-        if (!$plantingDate) {
-            return redirect()->back()->withErrors(['batchNumber' => 'No planting record found for the specified batch number.'])->withInput();
-        }
-    
-        // Calculate the age of the coffee plants
-        $age = Carbon::parse($validatedData['calendar'])->diffInYears($plantingDate);
-    
-        // Save the schedule to the database
-        $schedule = new Schedule();
-        $schedule->coffee_species = $validatedData['coffeeType'];
-        $schedule->Date_Set = $validatedData['calendar'];
-        $schedule->Schedule_Type = 'Roasting';
-        $schedule->batch_number = $validatedData['batchNumber'];
-        $schedule->progress_status = 0;
-        $schedule->user_id = Auth::id(); 
-        $schedule->age = $age; // Set the age
-        $schedule->location = $validatedData['location']; // Set the location
-        $schedule->save();
+        // Proceed to save the roasting schedule
+        $this->saveSingleSchedule($validatedData['coffeeType'], 'Roasting', $validatedData['calendar'], $validatedData['location'], $validatedData['batchNumber']);
     
         // Redirect or respond accordingly
-        return redirect()->back()->with('success', 'Schedule saved successfully.');
+        return redirect()->back()->with('success', 'Roasting schedule saved successfully.');
     }
+    
+    public function GrindingSave(Request $request)
+    {
+        // Validate the request
+        $validatedData = $request->validate([
+            'coffeeType' => 'required|in:arabica,excelsa,liberica,robusta',
+            'batchNumber' => 'required|integer',
+            'calendar' => 'required|date|after_or_equal:today', // Ensure the date is not in the past
+            'location' => 'required|in:Farm 1,Farm 2,Farm 3,Farm 4', // Validate the location
+        ], [
+            'calendar.after_or_equal' => 'The selected date has already passed.',
+        ]);
+    
+        // Check if roasting has been completed for the specified batch
+        $roastingCompleted = Schedule::where('coffee_species', $validatedData['coffeeType'])
+                                        ->where('batch_number', $validatedData['batchNumber'])
+                                        ->where('Schedule_Type', 'Roasting')
+                                        ->where('progress_status', 2) // Check if roasting is completed
+                                        ->exists();
+    
+        if (!$roastingCompleted) {
+            return redirect()->back()->withErrors(['roasting' => 'Roasting process must be completed before scheduling grinding.'])->withInput();
+        }
+    
+        // Proceed to save the grinding schedule
+        $this->saveSingleSchedule($validatedData['coffeeType'], 'Grinding', $validatedData['calendar'], $validatedData['location'], $validatedData['batchNumber']);
+    
+        // Redirect or respond accordingly
+        return redirect()->back()->with('success', 'Grinding schedule saved successfully.');
+    }
+    
 }

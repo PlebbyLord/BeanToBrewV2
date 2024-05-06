@@ -15,13 +15,13 @@
                             <a href="{{ route('harvest') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Set A Schedule</a>
                         </div>
                         <div class="col-md-6 mb-2 mx-auto text-center">
-                            <a href="{{ route('grind') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Grinding</a>
-                        </div>
-                        <div class="col-md-6 mb-2 mx-auto text-center">
                             <a href="{{ route('pack') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Packaging</a>
                         </div>
                         <div class="col-md-6 mb-2 mx-auto text-center">
                             <a href="{{ route('roast') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Roasting</a>
+                        </div>
+                        <div class="col-md-6 mb-2 mx-auto text-center">
+                            <a href="{{ route('grind') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">Grinding</a>
                         </div>
                         <div class="col-md-6 mb-2 mx-auto text-center">
                             <a href="{{ route('history') }}" class="btn btn-primary btn-lg btn-block" style="width: 250px; height: 50px;">History</a>
