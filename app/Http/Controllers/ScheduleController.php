@@ -35,13 +35,54 @@ class ScheduleController extends Controller
     {
         return view('Features.Schedules.harvest');
     }
-
+    
     public function history()
     {
-        $schedules = Schedule::whereIn('progress_status', [0, 1])->get();
-    
+        return view('Features.Schedules.history');
+    }
+
+    public function history1()
+    {
+        // Retrieve schedules where progress_status is 0 or 1 and location is 'Farm 1'
+        $schedules = Schedule::whereIn('progress_status', [0, 1])
+                              ->where('location', 'Farm 1')
+                              ->get();
+        
         // Pass the data to the view and return it
-        return view('Features.Schedules.history', compact('schedules'));
+        return view('Features.Schedules.History.history1', compact('schedules'));
+    }
+
+    public function history2()
+    {
+        // Retrieve schedules where progress_status is 0 or 1 and location is 'Farm 1'
+        $schedules = Schedule::whereIn('progress_status', [0, 1])
+                              ->where('location', 'Farm 2')
+                              ->get();
+        
+        // Pass the data to the view and return it
+        return view('Features.Schedules.History.history2', compact('schedules'));
+    }
+
+    public function history3()
+    {
+        // Retrieve schedules where progress_status is 0 or 1 and location is 'Farm 1'
+        $schedules = Schedule::whereIn('progress_status', [0, 1])
+                              ->where('location', 'Farm 3')
+                              ->get();
+        
+        // Pass the data to the view and return it
+        return view('Features.Schedules.History.history3', compact('schedules'));
+    }
+
+    public function history4()
+    {
+        // Retrieve schedules where progress_status is 0 or 1 and location is 'Farm 1'
+        $schedules = Schedule::whereIn('progress_status', [0, 1])
+                              ->where('location', 'Farm 4')
+                              ->get();
+        
+        // Pass the data to the view and return it
+        return view('Features.Schedules.History.history4', compact('schedules'));
     }
     
     public function roast()
