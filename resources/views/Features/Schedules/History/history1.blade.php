@@ -13,7 +13,40 @@
     {{ session('success') }}
 </div>
 @endif
-
+<style>
+    #filterCard {
+        position: fixed;
+        top: 66px;
+        left: 0px; /* Position on the left side */
+        width: 150px;
+        padding: 20px;
+        background-color: #f4d693; /* Set background color to white */
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Add a border for visibility */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+        z-index: 1000; /* Ensure it appears above other content */
+    }
+    .container {
+        margin-left: 150px; /* Adjust margin-left to move the content to the right */
+    }
+    .card-columns {
+        margin-top: 20px; /* Adjust top margin for spacing */
+    }
+    .card-footer {
+        background-color: #f8f9fa;
+        text-align: right;
+        font-weight: bold;
+    }
+    .form-group {
+        margin-bottom: 10px; /* Adjust margin bottom for spacing between form elements */
+    }
+    .form-control {
+        width: 600px; /* Adjust width of form controls */
+    }
+    .btn-primary {
+        padding: 5px 10px; /* Adjust padding of the button */
+        font-size: 14px; /* Adjust font size of the button text */
+    }
+</style>
 <div id="filterCard">
     <form id="filterForm">
         <div>
