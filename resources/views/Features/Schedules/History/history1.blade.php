@@ -158,7 +158,7 @@
 
 @section('scripts')
 <script>
-    // Function to handle filter changes and reset pagination to page 1
+    // Function to handle filter changes while preserving pagination
     function handleFilterChange() {
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
         const selectedTypes = Array.from(checkboxes)
@@ -167,8 +167,8 @@
 
         const urlParams = new URLSearchParams(window.location.search);
 
-        // Reset pagination to page 1
-        urlParams.set('page', '1');
+        // Get current page number from URL parameter
+        const currentPage = urlParams.get('page');
 
         // Remove existing schedule type parameters
         urlParams.delete('schedule_type[]');
@@ -178,7 +178,12 @@
             urlParams.append('schedule_type[]', type);
         });
 
-        // Construct the new URL with filters
+        // Set the preserved page number in URL parameters
+        if (currentPage) {
+            urlParams.set('page', currentPage);
+        }
+
+        // Construct the new URL with filters and preserved page number
         const baseUrl = window.location.href.split('?')[0];
         const newUrl = baseUrl + '?' + urlParams.toString();
 
@@ -193,5 +198,3 @@
     });
 </script>
 @endsection
-
-
