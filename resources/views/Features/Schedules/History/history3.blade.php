@@ -97,10 +97,16 @@
                                 </td>
                                 <td>                                
                                     @if($schedule->progress_status == 0 && $schedule->Date_Set <= now())
-                                        <form action="{{ route('schedStart', $schedule->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-danger">Start Task</button>
-                                        </form>
+                                    <form action="{{ route('schedStart', $schedule->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger">Start Task</button>
+                                    </form>
+                                    
+                                    <!-- Cancel Task Form -->
+                                    <form action="{{ route('cancelSched', $schedule->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-warning">Cancel Task</button>
+                                    </form>
                                     @elseif($schedule->progress_status == 1)
                                         @if($schedule->Schedule_Type === 'Harvesting')
                                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#harvestModal{{ $schedule->id }}">
@@ -145,6 +151,10 @@
                         </tbody>
                     </table>
                 </div>
+                                <!-- Pagination links -->
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $schedules->links() }}
+                                </div>
             </div>
         </div>
     </div>

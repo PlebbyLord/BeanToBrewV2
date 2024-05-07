@@ -334,6 +334,121 @@ class ScheduleController extends Controller
         return view('Features.Schedules.Completed.completed4', compact('schedules'));
     }  
 
+    public function canceled()
+    {
+        return view('Features.Schedules.canceled');
+    }
+
+    public function cancelSched($id)
+    {
+        $schedule = Schedule::findOrFail($id);
+    
+        if ($schedule->progress_status == 0 && $schedule->Date_Set < now()) {
+            // Update progress_status to indicate cancellation (e.g., status code 3 for "Cancelled")
+            $schedule->update(['progress_status' => 3]);
+            return back()->with('success', 'Schedule cancelled successfully.');
+        } else {
+            // If the schedule cannot be cancelled (e.g., it's already in progress), handle accordingly
+            return back()->with('error', 'Unable to cancel this schedule.');
+        }
+    }
+
+    public function canceled1(Request $request)
+    {
+        // Retrieve selected schedule types from the request
+        $selectedScheduleTypes = $request->input('schedule_type');
+        
+        // Query completed schedules (progress_status = 2) from 'Farm 1'
+        $query = Schedule::where('progress_status', 3)
+                         ->where('location', 'Farm 1');
+        
+        // If specific schedule types are selected, filter by them
+        if (!empty($selectedScheduleTypes) && in_array('all', $selectedScheduleTypes)) {
+            // If 'All' is selected, no need to filter further
+        } elseif (!empty($selectedScheduleTypes)) {
+            // Filter schedules by selected schedule types
+            $query->whereIn('Schedule_Type', $selectedScheduleTypes);
+        }
+        
+        // Get the filtered completed schedules
+        $schedules = $query->paginate(40);
+        
+        // Pass the data to the view
+        return view('Features.Schedules.Canceled.canceled1', compact('schedules'));
+    }  
+
+    public function canceled2(Request $request)
+    {
+        // Retrieve selected schedule types from the request
+        $selectedScheduleTypes = $request->input('schedule_type');
+        
+        // Query completed schedules (progress_status = 2) from 'Farm 1'
+        $query = Schedule::where('progress_status', 3)
+                         ->where('location', 'Farm 2');
+        
+        // If specific schedule types are selected, filter by them
+        if (!empty($selectedScheduleTypes) && in_array('all', $selectedScheduleTypes)) {
+            // If 'All' is selected, no need to filter further
+        } elseif (!empty($selectedScheduleTypes)) {
+            // Filter schedules by selected schedule types
+            $query->whereIn('Schedule_Type', $selectedScheduleTypes);
+        }
+        
+        // Get the filtered completed schedules
+        $schedules = $query->paginate(40);
+        
+        // Pass the data to the view
+        return view('Features.Schedules.Canceled.canceled2', compact('schedules'));
+    }  
+
+    public function canceled3(Request $request)
+    {
+        // Retrieve selected schedule types from the request
+        $selectedScheduleTypes = $request->input('schedule_type');
+        
+        // Query completed schedules (progress_status = 2) from 'Farm 1'
+        $query = Schedule::where('progress_status', 3)
+                         ->where('location', 'Farm 3');
+        
+        // If specific schedule types are selected, filter by them
+        if (!empty($selectedScheduleTypes) && in_array('all', $selectedScheduleTypes)) {
+            // If 'All' is selected, no need to filter further
+        } elseif (!empty($selectedScheduleTypes)) {
+            // Filter schedules by selected schedule types
+            $query->whereIn('Schedule_Type', $selectedScheduleTypes);
+        }
+        
+        // Get the filtered completed schedules
+        $schedules = $query->paginate(40);
+        
+        // Pass the data to the view
+        return view('Features.Schedules.Canceled.canceled3', compact('schedules'));
+    }  
+
+    public function canceled4(Request $request)
+    {
+        // Retrieve selected schedule types from the request
+        $selectedScheduleTypes = $request->input('schedule_type');
+        
+        // Query completed schedules (progress_status = 2) from 'Farm 1'
+        $query = Schedule::where('progress_status', 3)
+                         ->where('location', 'Farm 4');
+        
+        // If specific schedule types are selected, filter by them
+        if (!empty($selectedScheduleTypes) && in_array('all', $selectedScheduleTypes)) {
+            // If 'All' is selected, no need to filter further
+        } elseif (!empty($selectedScheduleTypes)) {
+            // Filter schedules by selected schedule types
+            $query->whereIn('Schedule_Type', $selectedScheduleTypes);
+        }
+        
+        // Get the filtered completed schedules
+        $schedules = $query->paginate(40);
+        
+        // Pass the data to the view
+        return view('Features.Schedules.Canceled.canceled4', compact('schedules'));
+    }  
+
     public function updateProgress(Request $request, $id)
     {
         // Validate the request data for completing the task
@@ -429,7 +544,7 @@ class ScheduleController extends Controller
         }
 
         // Schedule recurring tasks after each harvest
-        $harvestDate = $plantingDate->copy()->addYears(4); // Initial harvest date (4 years after planting)
+        $harvestDate = $plantingDate->copy()->addYears(3); // Initial harvest date (4 years after planting)
         while ($harvestDate->isBefore(Carbon::now()->addYears(10))) { // Set a long time span for recurring harvests
             // Schedule Harvesting
             $this->saveSingleSchedule($validatedData['coffeeType'], 'Harvesting', $harvestDate->format('Y-m-d'), $validatedData['location'], $batchNumber);

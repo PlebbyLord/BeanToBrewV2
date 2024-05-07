@@ -85,7 +85,7 @@
     // Function to calculate the best year for harvest using linear regression
     function calculateBestHarvestYear(selectedDate) {
         var plantingYear = selectedDate.year();
-        var bestYear = plantingYear + 4; // Adjust this based on your algorithm
+        var bestYear = plantingYear + 3; // Adjust this based on your algorithm
         return bestYear;
     }
 </script>

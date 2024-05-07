@@ -58,7 +58,8 @@
     <div class="container">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5>Farm 1 History</h5>
+                <h5>Canceled Schedules Farm 2</h5>
+                <a href="{{ route('history2') }}" class="btn btn-primary">View History</a>
             </div>               
             <div class="card-body">
                 <div class="table-responsive">
@@ -72,7 +73,6 @@
                                 <th>Date Set</th>
                                 <th>Schedule Type</th>
                                 <th>Status</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,76 +85,15 @@
                                 <td>{{ $schedule->Date_Set }}</td>
                                 <td>{{ $schedule->Schedule_Type }}</td>
                                 <td>
-                                    @if($schedule->progress_status == 0 && $schedule->Date_Set > now())
-                                        Waiting
-                                    @elseif($schedule->progress_status == 0 && $schedule->Date_Set == now()) 
-                                        Today
-                                    @elseif($schedule->progress_status == 0 && $schedule->Date_Set < now()) 
-                                        Delayed
-                                    @elseif($schedule->progress_status == 1)
-                                        In Progress   
+                                    @if($schedule->progress_status == 3)
+                                        <span class="canceled">Canceled</span>
                                     @endif
-                                </td>
-                                <td>                                
-                                    @if($schedule->progress_status == 0 && $schedule->Date_Set <= now())
-                                    <form action="{{ route('schedStart', $schedule->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-danger">Start Task</button>
-                                    </form>
-                                    
-                                    <!-- Cancel Task Form -->
-                                    <form action="{{ route('cancelSched', $schedule->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="btn btn-warning">Cancel Task</button>
-                                    </form>
-                                    @elseif($schedule->progress_status == 1)
-                                        @if($schedule->Schedule_Type === 'Harvesting')
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#harvestModal{{ $schedule->id }}">
-                                                Complete
-                                            </button>
-                                            <!-- Harvest Modal -->
-                                                <div class="modal fade" id="harvestModal{{ $schedule->id }}" tabindex="-1" role="dialog" aria-labelledby="harvestModalLabel{{ $schedule->id }}" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="harvestModalLabel{{ $schedule->id }}">Complete Harvesting Schedule</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <!-- Harvesting completion form -->
-                                                                <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
-                                                                    @csrf
-                                                                    <div class="form-group">
-                                                                        <label for="kilosHarvested">Enter Kilos Harvested:</label>
-                                                                        <input type="number" class="form-control" id="kilosHarvested" name="kilos_harvested" required>
-                                                                    </div>
-                                                                    <button type="submit" class="btn btn-primary">Complete</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        @else
-                                            <!-- Directly mark as completed -->
-                                            <form action="{{ route('updateProgress', $schedule->id) }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="kilos_harvested" value="0"> <!-- Dummy value or hidden field if needed -->
-                                                <button type="submit" class="btn btn-primary">Complete</button>
-                                            </form>
-                                        @endif
-                                    @endif                                                     
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                                <!-- Pagination links -->
-                                <div class="d-flex justify-content-center mt-4">
-                                    {{ $schedules->links() }}
-                                </div>
             </div>
         </div>
     </div>
