@@ -510,8 +510,11 @@ class ScheduleController extends Controller
         // Calculate dates based on the provided calendar date
         $plantingDate = Carbon::parse($validatedData['calendar']);
     
-        // Determine the batch number based on existing records for this coffeeType
-        $batchNumber = Schedule::where('coffee_species', $validatedData['coffeeType'])->count() + 1;
+        $latestBatchNumber = Schedule::where('coffee_species', $validatedData['coffeeType'])
+        ->max('batch_number'); // Get the highest batch number
+
+        // Calculate the new batch number (increment the latest batch number by 1)
+        $batchNumber = $latestBatchNumber !== null ? $latestBatchNumber + 1 : 1;
     
         // Save Planting schedule
         $this->saveSingleSchedule($validatedData['coffeeType'], 'Planting', $plantingDate->format('Y-m-d'), $validatedData['location'], $batchNumber);
