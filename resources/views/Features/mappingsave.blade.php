@@ -2,6 +2,18 @@
 
 @section('content')
 
+@if(session('error'))
+<div style="background-color: black; color: red; display: flex; justify-content: center; padding: 20px; font-size: 20px;">
+    {{ session('error') }}
+</div>
+@endif
+
+@if(session('success'))
+<div style="background-color: black; color: green; display: flex; justify-content: center; padding: 20px; font-size: 20px;">
+    {{ session('success') }}
+</div>
+@endif
+
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
