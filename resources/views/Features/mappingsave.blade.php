@@ -43,9 +43,6 @@
     // Your JavaScript code for handling map interaction and location saving
 </script>
 
-@endsection
-
-
 <script>
     const key = '6Sx6psxBFlIVSf20sQ9H'; // Replace with your MapTiler access token
     const map = L.map('map').setView([14.7690, 120.5427], 12); // Starting position: Samal, Bataan, Philippines
