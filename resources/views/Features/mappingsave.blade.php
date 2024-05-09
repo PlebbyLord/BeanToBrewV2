@@ -110,7 +110,7 @@
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('The location is too close to an existing location.');
+        alert('The location is too close to an existing location or the Branch name already Exist.');
     });
 }
 
