@@ -92,7 +92,7 @@
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error('Location saved successfully.');
         }
         return response.json();
     })
@@ -110,7 +110,7 @@
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while saving the location.');
+        alert('The location is too close to an existing location.');
     });
 }
 
