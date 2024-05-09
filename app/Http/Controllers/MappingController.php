@@ -49,14 +49,34 @@ class MappingController extends Controller
             'longitude' => 'required|numeric',
         ]);
     
+        // Retrieve input values from the request
+        $name = $request->input('name');
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+    
+        // Check if a location with the same name already exists
+        $existingLocation = Mapping::where('name', $name)->first();
+    
+        if ($existingLocation) {
+            // Location with the same name already exists, return with an error message
+            return redirect()->back()->with('error', 'A location with this name already exists.');
+        }
+    
+        // Check if there is any existing location within 3 kilometers (3000 meters) of the new location
+        $tooCloseLocation = Mapping::whereRaw('ST_Distance_Sphere(point(longitude, latitude), point(?, ?)) <= 3000', [$longitude, $latitude])
+                                    ->exists();
+    
+        if ($tooCloseLocation) {
+            // Location is too close to an existing location, return with an error message
+            return redirect()->back()->with('error', 'The location is too close to an existing location.');
+        }
+    
         // Create a new location
         $location = new Mapping();
-        $location->name = $request->input('name');
-        $location->latitude = $request->input('latitude');
-        $location->longitude = $request->input('longitude');
-    
-        // Assign the user_id from the authenticated user
-        $location->user_id = Auth::id(); 
+        $location->name = $name;
+        $location->latitude = $latitude;
+        $location->longitude = $longitude;
+        $location->user_id = Auth::id(); // Assign the user_id from the authenticated user 
     
         // Save the location to the database
         $location->save();
