@@ -84,7 +84,7 @@ class MappingController extends Controller
         // Return success response
         return response()->json(['success' => 'Location saved successfully.'], 200);
     }
-
+    
     public function getMappingData()
     {
         // Fetch all mappings from the database

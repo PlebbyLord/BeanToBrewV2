@@ -75,8 +75,8 @@
         }
     });
 
-// Function to save the location
-function saveLocation(name, latitude, longitude) {
+    // Function to save the location
+    function saveLocation(name, latitude, longitude) {
     // Send an AJAX request to save the location
     fetch('{{ route('mapping.save') }}', {
         method: 'POST',
@@ -92,20 +92,14 @@ function saveLocation(name, latitude, longitude) {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Location save failed.');
+            throw new Error('Location saved successfully.');
         }
         return response.json();
     })
     .then(data => {
         // Check if data contains 'error' or 'success' message
         if (data.error) {
-            if (data.error === 'A location with this name already exists.') {
-                alert(data.error); // Display specific error message for existing name
-            } else if (data.error === 'The location is too close to an existing location.') {
-                alert(data.error); // Display specific error message for close location
-            } else {
-                alert('Unknown error occurred.'); // Generic error handling
-            }
+            alert(data.error); // Display error message
         } else if (data.success) {
             alert(data.success); // Display success message
             // Reload the page to update the map with the new marker
@@ -116,9 +110,10 @@ function saveLocation(name, latitude, longitude) {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while saving the location.');
+        alert('The location is too close to an existing location or the Branch name already Exist.');
     });
 }
+
 </script>
 
 @endsection
