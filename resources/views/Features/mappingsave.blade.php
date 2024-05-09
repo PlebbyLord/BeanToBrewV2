@@ -2,14 +2,6 @@
 
 @section('content')
 
-@if(session('error'))
-<div class="alert alert-danger text-center">{{ session('error') }}</div>
-@endif
-
-@if(session('success'))
-<div class="alert alert-success text-center">{{ session('success') }}</div>
-@endif
-
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -38,10 +30,6 @@
 
 <!-- Leaflet JavaScript -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-    // Your JavaScript code for handling map interaction and location saving
-</script>
 
 <script>
     const key = '6Sx6psxBFlIVSf20sQ9H'; // Replace with your MapTiler access token

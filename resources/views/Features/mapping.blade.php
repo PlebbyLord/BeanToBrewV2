@@ -15,6 +15,15 @@
             border: 1px solid rgb(0, 0, 0);
         }
 </style>
+
+@if(session('error'))
+<div class="alert alert-danger text-center">{{ session('error') }}</div>
+@endif
+
+@if(session('success'))
+<div class="alert alert-success text-center">{{ session('success') }}</div>
+@endif
+
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
