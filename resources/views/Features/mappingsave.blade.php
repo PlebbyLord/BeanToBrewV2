@@ -77,30 +77,42 @@
 
     // Function to save the location
     function saveLocation(name, latitude, longitude) {
-        // Send an AJAX request to save the location
-        fetch('{{ route('mapping.save') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                name: name,
-                latitude: latitude,
-                longitude: longitude
-            })
+    // Send an AJAX request to save the location
+    fetch('{{ route('mapping.save') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            name: name,
+            latitude: latitude,
+            longitude: longitude
         })
-        .then(response => response.json())
-        .then(data => {
-            // Handle the response here, e.g., show a success message
-            alert(data.message);
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Check if data contains 'error' or 'success' message
+        if (data.error) {
+            alert(data.error); // Display error message
+        } else if (data.success) {
+            alert(data.success); // Display success message
             // Reload the page to update the map with the new marker
             location.reload();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
+        } else {
+            console.warn('Unexpected response:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving the location.');
+    });
+}
 
 </script>
 

@@ -58,8 +58,8 @@ class MappingController extends Controller
         $existingLocation = Mapping::where('name', $name)->first();
     
         if ($existingLocation) {
-            // Location with the same name already exists, return with an error message
-            return redirect()->route('feature.mappings')->with('error', 'A location with this name already exists.');
+            // Location with the same name already exists, return error response
+            return response()->json(['error' => 'A location with this name already exists.'], 422);
         }
     
         // Check if there is any existing location within 3 kilometers (3000 meters) of the new location
@@ -67,8 +67,8 @@ class MappingController extends Controller
                                     ->exists();
     
         if ($tooCloseLocation) {
-            // Location is too close to an existing location, return with an error message
-            return redirect()->route('feature.mappings')->with('error', 'The location is too close to an existing location.');
+            // Location is too close to an existing location, return error response
+            return response()->json(['error' => 'The location is too close to an existing location.'], 422);
         }
     
         // Create a new location
@@ -81,9 +81,10 @@ class MappingController extends Controller
         // Save the location to the database
         $location->save();
     
-        // Redirect to feature.mappings with a success message
-        return redirect()->route('feature.mappings')->with('success', 'Location saved successfully.');
+        // Return success response
+        return response()->json(['success' => 'Location saved successfully.'], 200);
     }
+    
     
 
     public function getMappingData()
