@@ -63,7 +63,7 @@ class MappingController extends Controller
         }
     
         // Check if there is any existing location within 3 kilometers (3000 meters) of the new location
-        $tooCloseLocation = Mapping::whereRaw('ST_Distance_Sphere(point(longitude, latitude), point(?, ?)) <= 3000', [$longitude, $latitude])
+        $tooCloseLocation = Mapping::whereRaw('ST_Distance_Sphere(point(longitude, latitude), point(?, ?)) <= 2000', [$longitude, $latitude])
                                     ->exists();
     
         if ($tooCloseLocation) {
