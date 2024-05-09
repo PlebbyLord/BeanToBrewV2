@@ -91,6 +91,11 @@ class RegisterController extends Controller
     
         // Generate a 6-digit verification code
         $verification_code = str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
+
+        $phoneNumber = $data['mobile_number'];
+        if (strlen($phoneNumber) !== 11 || substr($phoneNumber, 0, 2) !== '09') {
+            return redirect()->back()->with('error', 'Please use a valid Philippine mobile number with a total length of 11 characters, starting with "09".');
+        }
     
         // Create user instance
         $user = User::create([
