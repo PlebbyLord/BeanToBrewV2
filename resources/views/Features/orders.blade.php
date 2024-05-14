@@ -102,17 +102,15 @@
                                                 <br>
                                                 <small>Expect delivery at {{ \Carbon\Carbon::parse($cart->orders->first()->created_at)->addDays(1)->format('F j') }} - {{ \Carbon\Carbon::parse($cart->orders->first()->created_at)->addDays(2)->format('j') }}</small>
                                             @endif
+                                            @if ($cart->delivery_status == 1)
+                                            <form method="POST" action="{{ route('orders.cancel', ['cartId' => $cart->id]) }}" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                                @csrf
+                                                @method('POST')
+                                                <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+                                            </form>
+                                        @endif
                                         </label>
-                                    </div>   
-                                    <div class="col-md-1">
-                                        @if ($cart->delivery_status == 1)
-                                        <form method="POST" action="{{ route('orders.cancel', ['cartId' => $cart->id]) }}" onsubmit="return confirm('Are you sure you want to cancel this order?');">
-                                            @csrf
-                                            @method('POST')
-                                            <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
-                                        </form>
-                                    @endif
-                                    </div>                                  
+                                    </div>                                
                                     <div class="col-md-5">
                                         <div class="d-flex justify-content-start align-items-center" style="margin-top: 0px;">
                                             @if ($cart->delivery_status == 2 && !$cart->is_received)
