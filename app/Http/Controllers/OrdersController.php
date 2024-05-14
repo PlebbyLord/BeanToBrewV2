@@ -61,4 +61,39 @@ class OrdersController extends Controller
         $cart = Cart::findOrFail($cart_id); // Retrieve the cart item using the provided cart_id
         return view('Features.rate', compact('cart'));
     }
+
+    public function cancelOrder($cartId)
+{
+    // Find the cart
+    $cart = Cart::findOrFail($cartId);
+
+    // Check if the cart has an associated order
+    if (!$cart->orders()->exists()) {
+        return redirect()->back()->with('error', 'Failed to cancel order. Order not found for the cart.');
+    }
+
+    // Get the associated order
+    $order = $cart->orders()->first();
+
+    // If the delivery status is not 'Preparing to Ship' (status 1), do not allow cancellation
+    if ($cart->delivery_status != 1) {
+        return redirect()->back()->with('error', 'Order cannot be canceled as it is not in "Preparing to Ship" status.');
+    }
+
+    // Retrieve the purchase related to the cart
+    $purchase = Purchase::findOrFail($cart->purchase_id);
+
+    // Increment the purchase stock by the canceled quantity
+    $purchase->update([
+        'stock' => $purchase->item_stock + $cart->quantity
+    ]);
+
+    // Delete the order and associated cart
+    $order->delete();
+    $cart->delete();
+
+    // Redirect back or to a specific page
+    return redirect()->back()->with('success', 'Order canceled successfully. Item quantity restored to stock.');
+}
+
 }

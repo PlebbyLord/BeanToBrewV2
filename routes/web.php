@@ -32,6 +32,7 @@ Route::post('/verify', [VerificationController::class, 'verify'])->name('verific
 Route::middleware('verifyStatus')->group(function () {
 Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('features.cart');
 Route::get('/orders', [App\Http\Controllers\OrdersController::class, 'index'])->name('features.orders');
+Route::post('/orders/cancel/{cartId}', [App\Http\Controllers\OrdersController::class, 'cancelOrder'])->name('orders.cancel');
 Route::post('/cart/add', [App\Http\Controllers\CartController::class, 'addToCart'])->name('cart.addToCart');
 Route::post('/cart/updateQuantity', [App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
 Route::delete('/cart/{cart}', [App\Http\Controllers\CartController::class, 'destroy'])->name('cart.destroy');
