@@ -109,6 +109,10 @@ class SalesController extends Controller
         // Redirect back or to a specific page
         return redirect()->back()->with('success', 'Delivery status updated successfully and email dispatched.');
     }
+
+
+
+    
     
     public function pending()
     {

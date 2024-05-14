@@ -109,6 +109,12 @@
                                                 <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
                                             </form>
                                         @endif
+                                        @if($order->confirmation_status === 1)
+                                            <form method="POST" action="{{ route('orders.confirm', ['orderId' => $order->id]) }}">
+                                                @csrf
+                                                <button type="submit">Confirm Order</button>
+                                            </form>
+                                         @endif
                                         </label>
                                     </div>                                
                                     <div class="col-md-5">

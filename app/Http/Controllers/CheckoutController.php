@@ -132,6 +132,7 @@ class CheckoutController extends Controller
             $order->shipping_option = $request->input('shipping_option')[0];
             $order->payment_option = $request->input('payment_option')[0];
             $order->total_payment = $totalPayment;
+            // $order->confirmation_status = $request->input('payment_option')[0];
             $order->save();
     
             // Update item stock for the current item in the cart
