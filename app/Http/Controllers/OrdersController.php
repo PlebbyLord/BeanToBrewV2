@@ -85,7 +85,7 @@ class OrdersController extends Controller
 
     // Increment the purchase stock by the canceled quantity
     $purchase->update([
-        'stock' => $purchase->item_stock + $cart->quantity
+        'item_stock' => $purchase->item_stock + $cart->quantity
     ]);
 
     // Delete the order and associated cart
